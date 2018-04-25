@@ -2,8 +2,6 @@
 #include <cstdio>
 #include <vector>
 
-typedef long long ll;
-
 struct LazyContext {
 	LazyContext() {
 		
@@ -121,7 +119,3 @@ private:
 		}
 	}
 };
-
-int main() {
-	
-}
