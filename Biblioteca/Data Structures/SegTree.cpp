@@ -1,5 +1,5 @@
-#include <iostream>
-#include <cstdio>
+// Range update, range query segment tree
+
 #include <vector>
 
 struct LazyContext {
@@ -29,7 +29,6 @@ struct Node {
 	
 	Node(Node &l, Node &r) {
 		// merge
-		
 	}
 	
 	void apply(LazyContext lazy) {
