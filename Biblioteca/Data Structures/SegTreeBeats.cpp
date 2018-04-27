@@ -38,7 +38,7 @@ struct Node {
 	}
 	
 	void apply(LazyContext &lazy) {
-
+		// apply lazy update and change it if needed
 	}
 	
 	// atributes
