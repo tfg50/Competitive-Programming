@@ -20,7 +20,7 @@ struct LazyContext {
 
 struct Node {
 	Node() {
-		// empty constructor
+		// neutral element or empty node
 	}
 	
 	Node() {
@@ -57,7 +57,7 @@ public:
 	}
 	
 	i_t qry(int l, int r) {
-		if(l >= r) return i_t;
+		if(l >= r) return i_t();
 		l += n, r += n;
 		push(l);
 		push(r - 1);
