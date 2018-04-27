@@ -30,7 +30,7 @@ struct Node {
 	}
 
 	bool canBreak(LazyContext lazy) {
-		// return true if can break without applying lazy
+		// returns true if can break without applying lazy
 	}
 
 	bool canApply(LazyContext lazy) {
