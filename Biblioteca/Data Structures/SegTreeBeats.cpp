@@ -18,19 +18,19 @@ struct LazyContext {
 
 struct Node {
 	Node() {
-		// neutral element or empty node
+		// neutral element
 	}
 	
 	Node() {
 		// init
 	}
 	
-	Node(Node &l, Node &r) {
+	Node(Node l, Node r) {
 		// merge
 	}
 
 	bool canBreak(LazyContext lazy) {
-		// returns true if can break without applying lazy
+		// return true if can break without applying lazy
 	}
 
 	bool canApply(LazyContext lazy) {
@@ -38,7 +38,7 @@ struct Node {
 	}
 	
 	void apply(LazyContext &lazy) {
-		// apply lazy update and change it if needed
+		// changes lazy if needed
 	}
 	
 	// atributes
@@ -89,6 +89,12 @@ public:
 		build(r0 - 1);
 	}
 
+	void upd(int pos, e_t v) {
+		pos += n;
+		push(pos);
+		tree[pos] = i_t(v);
+		build(pos);
+	}
 private:
 	int n, h;
 	std::vector<bool> dirty;
@@ -105,8 +111,8 @@ private:
 
 	void pushSingle(int p) {
 		if(dirty[p]) {
-			apply(p + p, lazy[p]);
-			apply(p + p + 1, lazy[p]);
+			downUpd(p + p, lazy[p]);
+			downUpd(p + p + 1, lazy[p]);
 			lazy[p].reset();
 			dirty[p] = false;
 		}
@@ -122,7 +128,6 @@ private:
 		if(tree[p].canBreak(lc)) {
 			return;
 		} else if(tree[p].canApply(lc)) {
-			// pushSingle(p)
 			apply(p, lc);
 		} else {
 			pushSingle(p);
