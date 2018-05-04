@@ -76,6 +76,7 @@ private:
 			build(p + p, l, mid, base);
 			build(p + p + 1, mid + 1, r, base);
 			tree[p] = i_t(tree[p + p], tree[p + p + 1]);
+			lazy[p].reset();
 		}
 	}
 
