@@ -53,6 +53,7 @@ public:
 		}
 		for(int i = n - 1; i > 0; i--) {
 			tree[i] = i_t(tree[i + i], tree[i + i + 1]);
+			lazy[i].reset();
 		}
 	}
 	
