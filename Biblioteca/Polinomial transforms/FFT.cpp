@@ -2,50 +2,48 @@
 #include <complex>
 
 typedef double ld;
+
+const ld PI = acosl(-1.0);
+
 typedef std::complex<ld> Complex;
 typedef std::vector<Complex> CVector;
 
-const ld PI = acosl(-1);
+int bits[1 << 23];
 
-CVector fft(CVector a, bool inv = false)
-{
-	int n = a.size();
-	std::vector<int> bits(n, 0);
+void pre(int n) {
 	int LOG = 0;
-	while(1 << (LOG + 1) < n)
+	while(1 << (LOG + 1) < n) {
 		LOG++;
-	for(int i = 1; i < n; i++)
+	}
+	for(int i = 1; i < n; i++) {
 		bits[i] = (bits[i >> 1] >> 1) | ((i & 1) << LOG);
-	for(int i = 0; i < n; i++)
-	{
+	}
+}
+
+CVector fft(CVector a, bool inv = false) {
+	int n = a.size();
+	pre(n);
+	for(int i = 0; i < n; i++) {
 		int to = bits[i];
-		if(to > i)
+		if(to > i) {
 			std::swap(a[to], a[i]);
+		}
 	}
 	
-	CVector r(n / 2, 0);
-	double angle = inv ? -1 : 1;
-	r[0] = Complex(1, 0);
-	r[1] = Complex(cosl(angle * 2 * PI / n), sinl(angle * 2 * PI / n));
-	for(int i = 2; i < n / 2; i++)
-		r[i] = r[i - 1] * r[1];
-	for(int len = 1; len < n; len *= 2)
-	{
-		int delta = n / (2 * len);
-		for(int i = 0; i < n; i += 2 * len)
-		{
-			int cur_root = 0;
-			for(int j = 0; j < len; j++)
-			{
-				Complex u = a[i + j], v = a[i + j + len] * r[cur_root];
+	double angle = inv ? -PI : PI;
+	for(int len = 1; len < n; len *= 2) {
+		Complex delta(cosl(angle / len), sinl(angle / len));
+		for(int i = 0; i < n; i += 2 * len) {
+			Complex cur_root = 1;
+			for(int j = 0; j < len; j++) {
+				Complex u = a[i + j], v = a[i + j + len] * cur_root;
 				a[i + j] = u + v;
 				a[i + j + len] = u - v;
-				cur_root += delta;
+				cur_root *= delta;
 			}
 		}
 	}
-	if(inv)
-	{
+	if(inv) {
 		for(int i = 0; i < n; i++)
 			a[i] /= n;
 	}
