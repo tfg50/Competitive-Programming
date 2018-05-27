@@ -9,9 +9,8 @@ typedef long double ld;
 
 ull fmul(ull a, ull b, ull m) {
 	ull q = (ld) a * (ld) b / (ld) m;
-    ull r = a * b - q * m;
-
-    return (r + m) % m;
+	ull r = a * b - q * m;
+	return (r + m) % m;
 }
 
 ull fexp(ull x, ull e, ull m) {
