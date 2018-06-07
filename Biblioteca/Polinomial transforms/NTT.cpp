@@ -1,6 +1,7 @@
 const int MOD = 998244353;
 const int me = 15;
 const int ms = 1 << me;
+//const int MOD = 754974721;
 
 ll fexp(ll x, ll e, ll mod = MOD) {
 	ll ans = 1;
@@ -17,7 +18,7 @@ ll fexp(ll x, ll e, ll mod = MOD) {
 //is n primitive root of p ?
 bool test(ll x, ll p) {
 	ll m = p - 1;
-	for(int i = 2; i * i <= m; ++i) if(!(m % i)) {
+	for(int i = 2; i * i <= m; ++i) if(m % i == 0) {
 		if(fexp(x, i, p) == 1) return false;
 		if(fexp(x, m / i, p) == 1) return false;
 	}
@@ -30,7 +31,7 @@ ll search(ll p) {
 	return -1;
 }
 
-#define add(x, y, mod) x+y>=mod?x+y-mod:x+y
+#define add(x, y, mod) (x+y>=mod?x+y-mod:x+y)
 
 const int gen = search(MOD);
 int bits[ms], r[ms + 1];
@@ -55,19 +56,18 @@ void pre(int n, int root, int mod) {
 
 std::vector<int> fft(std::vector<int> a, int mod, bool inv = false) {
 	int root = gen;
-	if(inv)
+	if(inv) {
 		root = fexp(root, mod - 2, mod);
-
+	}
 	int n = a.size();
 	root = fexp(root, (mod - 1) / n, mod);
 	pre(n, root, mod);
-
-	for(int i=0;i<n;i++) {
+	for(int i = 0; i < n; i++) {
 		int to = bits[i];
-		if(i<to) 
+		if(i < to) {
 			std::swap(a[i], a[to]);
+		}
 	}
-
 	for(int len = 1; len < n; len *= 2) {
 		for(int i = 0; i < n; i += len * 2) {
 			int cur_root = 0;
@@ -80,7 +80,6 @@ std::vector<int> fft(std::vector<int> a, int mod, bool inv = false) {
 			}
 		}
 	}
-
 	if(inv) {
 		int rev = fexp(n, mod-2, mod);
 		for(int i = 0; i < n; i++)
