@@ -1,4 +1,3 @@
-
 struct SCC {
 	std::vector<std::vector<int>> edges;
 	std::vector<int> comp, st, idx;
