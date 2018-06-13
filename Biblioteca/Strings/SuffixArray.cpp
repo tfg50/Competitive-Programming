@@ -28,6 +28,30 @@ public:
 		}
 		return sa;
 	}
+
+	std::vector<int> buildLCP(const std::vector<int> &sa, const std::vector<T> &array) {
+		int n = sa.size();
+		std::vector<int> inv(n);
+		for(int i = 0; i < n; i++) {
+			inv[sa[i]] = i;
+		}
+		std::vector<int> lcp(n, 0);
+		for(int i = 0, k = 0; i < n; i++) {
+			if(inv[i] + 1 == n) {
+				k = 0;
+				continue;
+			}
+			int j = sa[inv[i] + 1];
+			while(i + k < n && j + k < n && array[i + k] == array[j + k]) {
+				k++;
+			}
+			lcp[inv[i]] = k;
+			if(k > 0) {
+				k--;
+			}
+		}
+		return lcp;
+	}
 private:
 	void auxSort(std::vector<int> &sa, const std::vector<int> &inv, int offset) {
 		// O(nlogn) step, O(nlog^2n) total
