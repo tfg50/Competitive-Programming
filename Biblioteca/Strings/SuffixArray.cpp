@@ -15,7 +15,8 @@ public:
 		for(int i = 1; i < n; i++) {
 			inv[sa[i]] = (array[sa[i - 1]] != array[sa[i]] ? ++cur : cur);
 		}
-		for(int k = 0; cur + 1 < n; k++) {
+		cur++;
+		for(int k = 0; cur < n; k++) {
 			cur = 0;
 			auxSort(sa, inv, 1 << k);
 			for(int l = 0, r = 0; l < n; l = r, cur++) {
