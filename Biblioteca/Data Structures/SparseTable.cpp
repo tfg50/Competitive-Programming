@@ -2,7 +2,7 @@ struct Merger {
 	int operator() (int a, int b) { return std::min(a, b); }
 };
 
-template <class T, class Merger = std::less<T> >
+template <class T, class Merger>
 class SparseTable {
 public:
 	void init(std::vector<T> a) {
