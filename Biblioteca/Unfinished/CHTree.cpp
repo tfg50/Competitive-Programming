@@ -49,30 +49,45 @@ public:
 
 	CHT(CHT &a, CHT &b) {
 		int sz = a.pts.size() + b.pts.size();
-		if(sz == a.pts.size()) {
+		if(sz == (int) a.pts.size()) {
 			pts = a.pts;
 			return;
-		} else if(sz == b.pts.size()) {
+		} else if(sz == (int) b.pts.size()) {
 			pts = b.pts;
 			return;
 		}
 		std::vector<Line> buffer(sz);
 		std::merge(a.pts.begin(), a.pts.end(), b.pts.begin(), b.pts.end(), buffer.begin());
-		int got = 0;
-		pts.resize(sz);
 		for(int i = 0; i < sz; i++) {
-			if(got > 0 && buffer[i].eval(INF) > pts[got - 1].eval(INF)) {
-				continue;
-			}
-			while(got > 0 && buffer[i].eval(-INF) < pts[got - 1].eval(-INF)) {
-				got--;
-			}
-			while(got >= 2 && (pts[got - 2] - pts[got - 1]) % (pts[got - 2] - buffer[i]) >= 0) {
-				got--;
-			}
-			pts[got++] = buffer[i];
+			addLine(buffer[i]);
 		}
-		pts.resize(got);
+	}
+
+	CHT(std::vector<Line> buffer) {
+		std::sort(buffer.begin(), buffer.end());
+		for(int i = 0; i < (int) buffer.size(); i++) {
+			addLine(buffer[i]);
+		}
+	}
+
+	void addLine(Line cur) {
+		if(!pts.empty() && pts.back().a == cur.a) {
+			if(pts.back().b > cur.b) {
+				pts.pop_back();
+			} else {
+				return;
+			}
+		}
+		int got = (int) pts.size();
+		/*while(got > 0 && cur.eval(-INF) < pts.back().eval(-INF)) {
+			got--;
+			pts.pop_back();
+		}*/
+		while(got >= 2 && (pts[got - 2] - pts[got - 1]) % (pts[got - 2] - cur) >= 0) {
+			got--;
+			pts.pop_back();
+		}
+		pts.push_back(cur);
 	}
 
 	T qry(T x) {
