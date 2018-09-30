@@ -23,6 +23,15 @@ public:
 		//assert(n <= (int) tree.size());
 	}
 
+	long long nearestNeighbor(PT point) {
+		// assert(tree.size() > 0);
+		long long ans = (long long) 1e18;
+		nearestNeighbor(&tree[0], point, 0, ans);
+		return ans;
+	}
+private:
+	std::vector<Node> tree;
+
 	Node* build(std::vector<PT>::iterator l, std::vector<PT>::iterator r, int &n, int h = 0) {
 		int id = n++;
 		if(r - l == 1) {
@@ -41,19 +50,13 @@ public:
 		return &tree[id];
 	}
 
-	long long nearestNeighbor(PT point) {
-		// assert(tree.size() > 0);
-		long long ans = (long long) 1e18;
-		nearestNeighbor(&tree[0], point, 0, ans);
-		return ans;
-	}
-private:
-	std::vector<Node> tree;
 	void nearestNeighbor(Node* node, PT point, int h, long long &ans) {
 		if(!node) {
 			return;
 		}
 		if(point != node->point) {
+			// THIS WAS FOR A PROBLEM
+			// THAT YOU DON'T CONSIDER THE DISTANCE TO ITSELF!
 			ans = std::min(ans, sqrDist(point, node->point));
 		}
 		d = h;
