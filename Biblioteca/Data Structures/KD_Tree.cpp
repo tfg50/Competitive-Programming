@@ -20,7 +20,7 @@ public:
 		int n = 0;
 		tree.resize(2 * pts.size());
 		build(pts.begin(), pts.end(), n);
-		assert(n <= (int) tree.size());
+		//assert(n <= (int) tree.size());
 	}
 
 	Node* build(std::vector<PT>::iterator l, std::vector<PT>::iterator r, int &n, int h = 0) {
@@ -45,7 +45,6 @@ public:
 		// assert(tree.size() > 0);
 		long long ans = (long long) 1e18;
 		nearestNeighbor(&tree[0], point, 0, ans);
-		assert(ans != 0);
 		return ans;
 	}
 private:
