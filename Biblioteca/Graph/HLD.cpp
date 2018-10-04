@@ -42,7 +42,7 @@ public:
 	}
 
 	std::vector<std::pair<int, int>> getPathtoAncestor(int u, int anc) {
-		// returns ranges [l, r) that have the path
+		// returns ranges [l, r) that the path has
 		std::vector<std::pair<int, int>> ans;
 		//assert(inSubtree(anc, u));
 		while(nxt[u] != nxt[anc]) {
