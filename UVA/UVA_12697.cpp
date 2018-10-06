@@ -6,6 +6,18 @@
 #include <set>
 #include <algorithm>
 
+/*
+UVA 12697
+Find the smallest subarray with sum <= X
+sum[l+1...r] = sum[r] - sum[l]
+sum[r] - sum[l] <= X
+sum[l] <= sum[r] - X
+also, l < r
+We can sort pairs of (sum[i], i) and do a two-pointer algorithm over it
+Insert points l that sum[l] - X >= sum[r] in a set
+and use that set to find the closest possible L
+*/
+
 std::mt19937 rng((int) std::chrono::steady_clock::now().time_since_epoch().count());
 
 int main() {
