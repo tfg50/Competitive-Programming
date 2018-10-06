@@ -14,7 +14,7 @@ sum[r] - sum[l] <= X
 sum[l] <= sum[r] - X
 also, l < r
 We can sort pairs of (sum[i], i) and do a two-pointer algorithm over it
-Insert points l that sum[l] - X >= sum[r] in a set
+Insert points l that sum[l] <= sum[r] - X in a set
 and use that set to find the closest possible L
 */
 
