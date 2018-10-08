@@ -36,4 +36,14 @@ struct Segment {
 		y /= tmp;
 		return PT(x, y);
 	}
+	
+	bool polygonIntersection(const std::vector<PT> &poly) {
+		long double l = -1e18, r = 1e18;
+		for(auto p : poly) {
+			long double z = plug(p);
+			l = std::max(l, z);
+			r = std::min(r, z);
+		}
+		return l - r > eps;
+	}
 };
