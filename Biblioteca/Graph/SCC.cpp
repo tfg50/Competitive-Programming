@@ -1,7 +1,7 @@
 struct SCC {
 	std::vector<std::vector<int>> edges;
 	std::vector<int> comp, st, idx;
-	int c;
+	int c, x;
 
 	void init(int n) {
 		edges.resize(n);
@@ -24,21 +24,24 @@ struct SCC {
 			comp[on] = std::min(comp[on], dfs(to));
 		}
 		if(idx[on] == comp[on]) {
+			int lo = comp[on];
 			while(1) {
 				int v = st.back();
 				st.pop_back();
 				idx[v] = -1;
-				comp[v] = comp[on];
+				comp[v] = x;
 				if(v == on) {
 					break;
 				}
 			}
+			x++;
+			return lo;
 		}
 		return comp[on];
 	}
 
 	void tarjan() {
-		c = 0;
+		c = x = 0;
 		for(int i = 0; i < edges.size(); i++) {
 			dfs(i);
 		}
