@@ -12,6 +12,7 @@ struct SCC {
 
 	void addEdge(int u, int v) {
 		edges[u].push_back(v);
+		// if using for 2sat, add v^1 -> u^1
 	}
 
 	int dfs(int on) {
@@ -43,6 +44,7 @@ struct SCC {
 	void tarjan() {
 		c = x = 0;
 		for(int i = 0; i < edges.size(); i++) {
+			// for 2sat, 2 * i is true if comp[2 * i] < comp[2 * i + 1]
 			dfs(i);
 		}
 	}
