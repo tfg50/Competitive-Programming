@@ -1,11 +1,17 @@
-#include <vector>
-#include <complex>
-
-typedef double ld;
-
 const ld PI = acosl(-1.0);
 
-typedef std::complex<ld> Complex;
+struct Complex {
+	ld real, imag;
+
+	Complex(ld a = 0, ld b = 0) : real(a), imag(b) {}
+	Complex operator + (const Complex &o) const { return Complex(real + o.real, imag + o.imag); }
+	Complex operator - (const Complex &o) const { return Complex(real - o.real, imag - o.imag); }
+	Complex operator * (const Complex &o) const { return Complex(real * o.real - imag * o.imag, real * o.imag + imag * o.real); }
+	Complex operator / (ld o) const { return Complex(real / o, imag / o); }
+	void operator *= (Complex o) { *this = *this * o; }
+	void operator /= (ld o) { real /= o, imag /= o; }
+};
+
 typedef std::vector<Complex> CVector;
 
 int bits[1 << 23];
