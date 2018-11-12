@@ -27,6 +27,11 @@ else, it receives -balance[u] / 2 from source
 and the edges are oriented (u, v)
 
 there exists a valid configuration iff we can saturate the source/sink
+
+somehow I got this idea from the solution to this problem:
+http://codeforces.com/gym/101492/problem/I
+
+the solution is described in a book about flow, not sure which book it is
 */
 
 template <class T = int>
