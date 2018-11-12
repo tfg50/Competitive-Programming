@@ -7,6 +7,28 @@
 
 std::mt19937 rng((int) std::chrono::steady_clock::now().time_since_epoch().count());
 
+/*
+Problem: Given a connected graph with directed and undirected edges
+find a direction such that there's an euler circuit in the graph.
+
+The condition for finding this is making the in/out degree of
+the vertices balanced or for every in edge, there's an out edge.
+This creates a restriction that every vertex must have even edges.
+
+Assuming that the undirected edge (u, v) goes from u to v,
+some edges might need to be flipped. Vertex u has
+balance[u] = in[u] - out[u]
+if balance[u] > 0, balance[u] / 2 edges that go in will have to be flipped
+else, -balance[u] / 2 edges that go out will have to be flipped.
+
+Now, we create a network where
+if balance[u] > 0, it needs to send balance[u] / 2 to sink
+else, it receives -balance[u] / 2 from source
+and the edges are oriented (u, v)
+
+there exists a valid configuration iff we can saturate the source/sink
+*/
+
 template <class T = int>
 class Dinic {
 public:
@@ -88,28 +110,6 @@ private:
 		return h[sink] < n;
 	}
 };
-
-/*
-Problem: Given a connected graph with directed and undirected edges
-find a direction such that there's an euler circuit in the graph.
-
-The condition for finding this is making the in/out degree of
-the vertices balanced or for every in edge, there's an out edge.
-This creates a restriction that every vertex must have even edges.
-
-Assuming that the undirected edge (u, v) goes from u to v,
-some edges might need to be flipped. Vertex u has
-balance[u] = in[u] - out[u]
-if balance[u] > 0, balance[u] / 2 edges that go in will have to be flipped
-else, -balance[u] / 2 edges that go out will have to be flipped.
-
-Now, we create a network where
-if balance[u] > 0, it needs to send balance[u] / 2 to sink
-else, it receives -balance[u] / 2 from source
-and the edges are oriented (u, v)
-
-there exists a valid configuration iff we can saturate the source/sink
-*/
 
 bool solve() {
 	int n, m;
