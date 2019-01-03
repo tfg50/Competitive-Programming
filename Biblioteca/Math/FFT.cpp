@@ -1,8 +1,10 @@
-const ld PI = acosl(-1.0);
+typedef double ld;
+
+const ld PI = acos(-1);
 
 struct Complex {
 	ld real, imag;
-
+	Complex conj() { return Complex(real, -imag); }
 	Complex(ld a = 0, ld b = 0) : real(a), imag(b) {}
 	Complex operator + (const Complex &o) const { return Complex(real + o.real, imag + o.imag); }
 	Complex operator - (const Complex &o) const { return Complex(real - o.real, imag - o.imag); }
@@ -14,7 +16,8 @@ struct Complex {
 
 typedef std::vector<Complex> CVector;
 
-int bits[1 << 23];
+int bits[1 << 22];
+Complex root[1 << 22];
 
 void pre(int n) {
 	int LOG = 0;
@@ -25,6 +28,7 @@ void pre(int n) {
 		bits[i] = (bits[i >> 1] >> 1) | ((i & 1) << LOG);
 	}
 }
+
 
 CVector fft(CVector a, bool inv = false) {
 	int n = a.size();
@@ -38,14 +42,15 @@ CVector fft(CVector a, bool inv = false) {
 	
 	double angle = inv ? -PI : PI;
 	for(int len = 1; len < n; len *= 2) {
-		Complex delta(cosl(angle / len), sinl(angle / len));
+		for(int i = 0; i < len; i++) {
+			root[i] = Complex(cos(angle / len * i), sin(angle / len * i));
+		}
 		for(int i = 0; i < n; i += 2 * len) {
-			Complex cur_root = 1;
 			for(int j = 0; j < len; j++) {
+				Complex cur_root = root[j];
 				Complex u = a[i + j], v = a[i + j + len] * cur_root;
 				a[i + j] = u + v;
 				a[i + j + len] = u - v;
-				cur_root *= delta;
 			}
 		}
 	}
@@ -80,9 +85,14 @@ void ifft2in1(CVector &a, CVector &b) {
 	}
 }
 
-std::vector<long long> mul(const std::vector<long long> &a, const std::vector<long long> &b, long long cut = 1 << 16) {
+
+std::vector<int> mod_mul(const std::vector<int> &a, const std::vector<int> &b, long long cut = 1 << 15) {
+	// TODO cut memory here by /2
 	int n = (int) a.size();
-	std::vector<CVector> C(4, CVector(n, 0));
+	CVector C[4];
+	for(int i = 0; i < 4; i++) {
+		C[i].resize(n);
+	}
 	for(int i = 0; i < n; i++) {
 		C[0][i] = a[i] % cut;
 		C[1][i] = a[i] / cut;
@@ -99,12 +109,38 @@ std::vector<long long> mul(const std::vector<long long> &a, const std::vector<lo
 	}
 	ifft2in1(C[0], C[1]);
 	ifft2in1(C[2], C[3]);
-	std::vector<long long> ans(n, 0);
+	std::vector<int> ans(n, 0);
 	for(int i = 0; i < n; i++) {
 		// if there are negative values, care with rounding
+		// also, take mod here if needed
 		ans[i] += (long long) (C[0][i].real + 0.5);
 		ans[i] += (long long) (C[1][i].real + C[2][i].real + 0.5) * cut;
 		ans[i] += (long long) (C[3][i].real + 0.5) * cut * cut;
 	}
 	return ans;
+}
+
+std::vector<int> mul(const std::vector<int> &a, const std::vector<int> &b) {
+	int n = 1;
+	while (n - 1 < (int) a.size() + (int) b.size() - 2) n += n;
+	CVector poly(n);
+	for(int i = 0; i < n; i++) {
+		if(i < (int) a.size()) {
+			poly[i].real = a[i];
+		}
+		if(i < (int) b.size()) {
+			poly[i].imag = b[i];
+		}
+	}
+	poly = fft(poly);
+	for(int i = 0; i < n; i++) {
+		poly[i] *= poly[i];
+	}
+	poly = fft(poly, true);
+	std::vector<int> c(n, 0);
+	for(int i = 0; i < n; i++) {
+		c[i] = (int) (poly[i].imag / 2 + 0.5);
+	}
+	while (c.size() > 0 && c.back() == 0) c.pop_back();
+	return c;
 }
