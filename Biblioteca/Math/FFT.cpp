@@ -16,8 +16,21 @@ struct Complex {
 
 typedef std::vector<Complex> CVector;
 
-int bits[1 << 22];
-Complex root[1 << 22];
+const int ms = 1 << 22;
+
+int bits[ms];
+Complex root[ms];
+
+void initFFT() {
+	root[1] = Complex(1);
+	for(int len = 2; len < ms; len += len) {
+		Complex z(cos(PI / len), sin(PI / len));
+		for(int i = len / 2; i < len; i++) {
+			root[2 * i] = root[i];
+			root[2 * i + 1] = root[i] * z;
+		}
+	}
+}
 
 void pre(int n) {
 	int LOG = 0;
@@ -33,21 +46,19 @@ void pre(int n) {
 CVector fft(CVector a, bool inv = false) {
 	int n = a.size();
 	pre(n);
+	if(inv) {
+		std::reverse(a.begin() + 1, a.end());
+	}
 	for(int i = 0; i < n; i++) {
 		int to = bits[i];
 		if(to > i) {
 			std::swap(a[to], a[i]);
 		}
 	}
-	
-	double angle = inv ? -PI : PI;
 	for(int len = 1; len < n; len *= 2) {
-		for(int i = 0; i < len; i++) {
-			root[i] = Complex(cos(angle / len * i), sin(angle / len * i));
-		}
 		for(int i = 0; i < n; i += 2 * len) {
 			for(int j = 0; j < len; j++) {
-				Complex u = a[i + j], v = a[i + j + len] * root[j];
+				Complex u = a[i + j], v = a[i + j + len] * root[len + j];
 				a[i + j] = u + v;
 				a[i + j + len] = u - v;
 			}
