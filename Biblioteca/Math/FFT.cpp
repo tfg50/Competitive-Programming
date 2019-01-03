@@ -47,8 +47,7 @@ CVector fft(CVector a, bool inv = false) {
 		}
 		for(int i = 0; i < n; i += 2 * len) {
 			for(int j = 0; j < len; j++) {
-				Complex cur_root = root[j];
-				Complex u = a[i + j], v = a[i + j + len] * cur_root;
+				Complex u = a[i + j], v = a[i + j + len] * root[j];
 				a[i + j] = u + v;
 				a[i + j + len] = u - v;
 			}
