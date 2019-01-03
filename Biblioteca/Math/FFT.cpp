@@ -86,7 +86,7 @@ void ifft2in1(CVector &a, CVector &b) {
 }
 
 
-std::vector<int> mod_mul(const std::vector<int> &a, const std::vector<int> &b, long long cut = 1 << 15) {
+std::vector<long long> mod_mul(const std::vector<long long> &a, const std::vector<long long> &b, long long cut = 1 << 15) {
 	// TODO cut memory here by /2
 	int n = (int) a.size();
 	CVector C[4];
@@ -109,10 +109,9 @@ std::vector<int> mod_mul(const std::vector<int> &a, const std::vector<int> &b, l
 	}
 	ifft2in1(C[0], C[1]);
 	ifft2in1(C[2], C[3]);
-	std::vector<int> ans(n, 0);
+	std::vector<long long> ans(n, 0);
 	for(int i = 0; i < n; i++) {
 		// if there are negative values, care with rounding
-		// also, take mod here if needed
 		ans[i] += (long long) (C[0][i].real + 0.5);
 		ans[i] += (long long) (C[1][i].real + C[2][i].real + 0.5) * cut;
 		ans[i] += (long long) (C[3][i].real + 0.5) * cut * cut;
