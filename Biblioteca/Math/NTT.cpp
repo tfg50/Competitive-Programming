@@ -26,7 +26,7 @@ int search(int p) {
 	for(int i = p - 1; i >= 2; --i) if(test(i, p)) return i;
 	return -1;
 }
-map<int, int> roots;
+std::map<int, int> roots;
 int get_root(int p) {
 	if(roots[p]) {
 		return roots[p];
@@ -62,16 +62,15 @@ void pre(int n) {
 	}
 }
 
-vector<int> fft(vector<int> a, int mod, bool inv = false) {
+std::vector<int> fft(std::vector<int> a, int mod, bool inv = false) {
 	int n = (int) a.size();
 	pre(n);
 	if(inv) {
-		reverse(a.begin() + 1, a.end());
+		std::reverse(a.begin() + 1, a.end());
 	}
 	for(int i = 0; i < n; i++) {
 		int to = bits[i];
-		if(i < to) 
-			swap(a[i], a[to]);
+		if(i < to) { std::swap(a[i], a[to]); }
 	}
 	for(int len = 1; len < n; len *= 2) {
 		for(int i = 0; i < n; i += len * 2) {
