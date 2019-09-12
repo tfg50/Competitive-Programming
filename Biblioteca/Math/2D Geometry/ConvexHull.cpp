@@ -60,6 +60,7 @@ bool isInside(const std::vector<PT> &hull, PT point) {
 }
 
 int maximizeScalarProduct(const std::vector<PT> &hull, PT vec) {
+	// this code assumes that there are no 3 colinear points
 	int ans = 0;
 	int n = hull.size();
 	if(n < 20) {
@@ -69,44 +70,23 @@ int maximizeScalarProduct(const std::vector<PT> &hull, PT vec) {
 			}
 		}
 	} else {
-		int diff = 1;
-		if(hull[0] * vec == hull[1] * vec) {
+		if(hull[1] * vec > hull[ans] * vec) {
+			ans = 1;
+		}
+		for(int rep = 0; rep < 2; rep++) {
 			int l = 2, r = n - 1;
 			while(l != r) {
-				int mid = (l + r) / 2;
-				if((hull[1] - hull[0]) * (hull[mid] - hull[0]) > 0 && (hull[1] - hull[0]) % (hull[mid] - hull[0]) == 0) {
-					l = mid + 1;
-				} else {
-					r = mid;
-				}
-			}
-			diff = l;
-			//diff = 2;
-		}
-		if(hull[0] * vec < hull[diff] * vec) {
-			int l = diff, r = n - 1;
-			while(l != r) {
 				int mid = (l + r + 1) / 2;
-				if(hull[mid] * vec >= hull[mid - 1] * vec && hull[mid] * vec >= hull[0] * vec) {
+				bool flag = hull[mid] * vec >= hull[mid-1] * vec;
+				if(rep == 0) { flag = flag && hull[mid] * vec >= hull[0] * vec; }
+				else { flag = flag || hull[mid-1] * vec < hull[0] * vec; }
+				if(flag) {
 					l = mid;
 				} else {
 					r = mid - 1;
 				}
 			}
-			if(hull[0] * vec < hull[l] * vec) {
-				ans = l;
-			}
-		} else {
-			int l = diff, r = n - 1;
-			while(l != r) {
-				int mid = (l + r + 1) / 2;
-				if(hull[mid] * vec >= hull[mid - 1] * vec || hull[mid - 1] * vec < hull[0] * vec) {
-					l = mid;
-				} else {
-					r = mid - 1;
-				}
-			}
-			if(hull[0] * vec < hull[l] * vec) {
+			if(hull[ans] * vec < hull[l] * vec) {
 				ans = l;
 			}
 		}
