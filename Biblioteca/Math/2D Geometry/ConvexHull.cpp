@@ -1,23 +1,45 @@
-std::vector<PT> ConvexHull (std::vector<PT> pts) {
+std::vector<PT> splitHull(const std::vector<PT> &hull) {
+	std::vector<PT> ans(hull.size());
+	for(int i = 0, j = (int) hull.size()-1, k = 0; k < (int) hull.size(); k++) {
+		if(hull[i] < hull[j]) {
+			ans[k] = hull[i++];
+		} else {
+			ans[k] = hull[j--];
+		}
+	}
+	return ans;
+}
+
+std::vector<PT> ConvexHull (std::vector<PT> pts, bool needs = true) {
+	if(needs) {
+		std::sort(pts.begin(), pts.end());
+	}
+	pts.resize(std::unique(pts.begin(), pts.end()) - pts.begin());
 	if(pts.size() <= 1) return pts;
-	std::sort(pts.begin(), pts.end(), [](PT a, PT b) -> bool { return a.x != b.x ? a.x < b.x : a.y < b.y; });
-	//pts.resize(std::unique(pts.begin(), pts.end(), [](PT a, PT b) -> bool { return a.x == b.x && a.y == b.y; }) - pts.begin());
-	std::vector<PT> ans(2 * pts.size());
+	std::vector<PT> ans(pts.size() + 2);
 	int s = 0;
-	for(int i = 0; i < pts.size(); i++) {
+	for(int i = 0; i < (int) pts.size(); i++) {
 		while(s > 1 && (pts[i] - ans[s - 2]) % (ans[s - 1] - ans[s - 2]) >= 0) {
 			s--;
 		}
 		ans[s++] = pts[i];
 	}
-	for(int i = pts.size() - 1, t = s + 1; i > 0; i--) {
-		while(s >= t && (pts[i - 1] - ans[s - 2]) % (ans[s - 1] - ans[s - 2]) >= 0) {
+	for(int i = (int) pts.size() - 2, t = s + 1; i >= 0; i--) {
+		while(s >= t && (pts[i] - ans[s - 2]) % (ans[s - 1] - ans[s - 2]) >= 0) {
 			s--;
 		}
-		ans[s++] = pts[i - 1];
+		ans[s++] = pts[i];
 	}
-	ans.resize(s - 1);
+	ans.resize(s-1);
 	return ans;
+}
+
+std::vector<PT> ConvexHull(const std::vector<PT> &a, const std::vector<PT> &b) {
+	auto A = splitHull(a);
+	auto B = splitHull(b);
+	std::vector<PT> C(A.size() + B.size());
+	std::merge(A.begin(), A.end(), B.begin(), B.end(), C.begin());
+	return ConvexHull(C, false);
 }
 
 bool isInside(const std::vector<PT> &hull, PT point) {
