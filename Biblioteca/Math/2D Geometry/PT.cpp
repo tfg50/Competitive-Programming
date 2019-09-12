@@ -10,4 +10,6 @@ struct PT {
 	T operator %(const PT &p)  const { return x*p.y-y*p.x;     }
 	//double operator !()        const { return sqrt(x*x+y*y);   }
 	//double operator ^(const PT &p) const { return atan2(*this%p, *this*p);}
+	bool operator < (const PT &p) const { return x != p.x ? x < p.x : y < p.y; }
+	bool operator == (const PT &p)const { return x == p.x && y == p.y; }
 };
