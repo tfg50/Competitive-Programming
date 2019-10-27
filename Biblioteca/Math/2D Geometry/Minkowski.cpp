@@ -7,6 +7,7 @@ bool comp(PT a, PT b){
 	return a*a < b*b;
 }
 
+// This code assumes points are ordered in ccw and the first points in both vectors is the min lexicographically
 std::vector<PT> minkowskiSum(const std::vector<PT> &a, const std::vector<PT> &b){
 	if(a.empty() || b.empty()) return std::vector<PT>(0);
 	std::vector<PT> ret;
