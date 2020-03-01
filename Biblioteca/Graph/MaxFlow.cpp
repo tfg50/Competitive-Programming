@@ -1,6 +1,3 @@
-#include <vector>
-#include <queue>
-
 template <class T = int>
 class Dinic {
 public:
@@ -18,12 +15,12 @@ public:
 	T maxFlow(int src, int sink) {
 		T ans = 0;
 		while(bfs(src, sink)) {
-			for(int i = 0; i < n; i++) {
-				std::random_shuffle(edges[i].begin(), edges[i].end());
-			}
+			//for(int i = 0; i < n; i++) {
+			//	std::random_shuffle(edges[i].begin(), edges[i].end());
+			//}
 			T flow;
 			pt = std::vector<int>(n, 0);
-			while(flow = dfs(src, sink)) {
+			while((flow = dfs(src, sink))) {
 				ans += flow;
 			}
 		}
