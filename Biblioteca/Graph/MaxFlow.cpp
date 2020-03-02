@@ -7,9 +7,8 @@ public:
 		T cap;
 	};
 
-	Dinic(int n) {
+	Dinic(int _n) : n(_n) {
 		edges.resize(n);
-		this->n = n;
 	}
 
 	T maxFlow(int src, int sink) {
@@ -45,7 +44,7 @@ private:
 		} if(on == sink) {
 			return flow;
 		}
-		for(; pt[on] < edges[on].size(); pt[on]++) {
+		for(; pt[on] < (int) edges[on].size(); pt[on]++) {
 			int cur = edges[on][pt[on]];
 			if(h[on] + 1 != h[list[cur].to]) {
 				continue;
