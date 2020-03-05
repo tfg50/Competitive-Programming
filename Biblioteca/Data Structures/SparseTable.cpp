@@ -1,17 +1,18 @@
-struct Merger {
-	int operator() (int a, int b) { return std::min(a, b); }
+template<class T>
+struct Minimizer {
+	T operator() (T a, T b) { return std::min(a, b); }
 };
 
-template <class T, class Merger>
+template <class T, class Merger = Minimizer<T>>
 class SparseTable {
 public:
-	void init(std::vector<T> a) {
+	void init(const std::vector<T> &a) {
 		int e = 0;
 		int n = a.size();
-		while((1 << e) / 2 < a.size()) {
+		while((1 << e) / 2 < n) {
 			e++;
 		}
-		table.resize(e, std::vector<T>(n));
+		table.assign(e, std::vector<T>(n));
 		get.assign(n + 1, -1);
 		for(int i = 0; i < n; i++) {
 			table[0][i] = a[i];
@@ -27,6 +28,11 @@ public:
 	T qry(int l, int r) {
 		int e = get[r - l];
 		return merge(table[e][l], table[e][r - (1 << e)]);
+	}
+
+	int getPos(int x) {
+		while(x >= (int) get.size()) get.push_back(get[(int) get.size() / 2] + 1);
+		return get[x];
 	}
 private:
 	std::vector<std::vector<T>> table;

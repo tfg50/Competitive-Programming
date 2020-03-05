@@ -16,7 +16,7 @@ struct modBase {
 	void operator += (modBase<mod> o) { *this = *this + o; }
 	void operator -= (modBase<mod> o) { *this = *this - o; }
 	void operator *= (modBase<mod> o) { *this = *this * o; }
-	modBase<mod> operator * (modBase<mod> o) { return (long long) val * o.val % mod; }
+	modBase<mod> operator * (modBase<mod> o) { return (int)((long long) val * o.val % mod); }
 	//modBase<mod> operator / (modBase<mod> o) { return *this * fexp(o, mod - 2); }
 	modBase<mod> operator + (modBase<mod> o) { return val + o.val >= mod ? val + o.val - mod : val + o.val; }
 	modBase<mod> operator - (modBase<mod> o) { return val - o.val < 0 ? val - o.val + mod : val - o.val; }
