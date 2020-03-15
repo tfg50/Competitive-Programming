@@ -6,6 +6,7 @@ struct LazyContext {
 };
 
 struct Info {
+	Info() {}
 	Info(int x) {}
 	Info(Info l, Info r) {}
 	void apply(LazyContext lazy, int size) {}
@@ -17,12 +18,12 @@ struct Info {
 template<class i_t, class lazy_cont>
 struct SplayTree {
 	struct Node {
-		Node *p = NULL, *left = NULL, *right = NULL;
+		Node *pp = NULL, *p = NULL, *left = NULL, *right = NULL;
 		int size = 1;
 		bool flip = false;
 		i_t base, info;
 		lazy_cont lazy;
-
+		Node() {}
 		Node(i_t v) : base(v), info(v) {}
 		~Node() {
 			if(left) delete left;
@@ -71,6 +72,7 @@ struct SplayTree {
 		void pull() {
 			if(p) {
 				p->pull();
+				pp = p->pp;
 			}
 			push();
 		}
