@@ -103,11 +103,9 @@ private:
 	}
  
 	bool augment(M1 &m1, M2 &m2) {
-		bool got = false;
 		std::queue<int> q;
 		std::vector<int> dist(n, -1);
 		std::vector<int> frm(n, -1);
-		std::vector<std::vector<int>> layers;
 		for(int i = 0; i < n; i++) {
 			if(test(m1, i)) {
 				q.push(i);
@@ -117,7 +115,6 @@ private:
 		if(q.empty()) {
 			return false;
 		}
-		int limit = 1e9;
 		while(!q.empty()) {
 			int on = q.front();
 			q.pop();
@@ -131,7 +128,6 @@ private:
 					dist[i] = dist[on] + 1;
 					frm[i] = on;
 					if(test(m2, i)) {
-						limit = dist[i];
 						for(int pos = i; pos != -1; pos = frm[pos]) {
 							present[pos] = !present[pos];
 						}
@@ -141,7 +137,7 @@ private:
 				}
 			}
 		}
-		return got;
+		return false;
 	}
 };
 
