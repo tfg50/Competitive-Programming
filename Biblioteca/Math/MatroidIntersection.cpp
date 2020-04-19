@@ -1,30 +1,23 @@
-// example matroids
+// matroid needs:
+// add(object), reset(), check()
 
 struct Edge {
 	int u, v;
 	Edge() {}
 	Edge(int a, int b) : u(std::min(a, b)), v(std::max(a, b)) {}
-	bool operator < (const Edge &o) const { return u != o.u ? u < o.u : v < o.v; }
-	bool operator == (const Edge &o) const { return u == o.u && v == o.v; }
 };
 
 class ChoiceMatroid {
 public:
 	ChoiceMatroid(const std::vector<int> &freq) : limit(freq) {}
-	bool isIndependent(const std::vector<Edge> &a) {
-		return getRank(a) == (int) a.size();
+	bool check(const Edge &e) { return cur[e.u] && cur[e.v]; }
+	void add(const Edge &e) {
+		assert(check(e));
+		cur[e.u]--;
+		cur[e.v]--;
 	}
-	int getRank(const std::vector<Edge> &a) {
+	void clear() {
 		cur = limit;
-		int ans = 0;
-		for(auto e : a) {
-			if(cur[e.u] && cur[e.v]) {
-				cur[e.u]--;
-				cur[e.v]--;
-				ans++;
-			}
-		}
-		return ans;
 	}
 private:
 	std::vector<int> limit, cur;
@@ -33,18 +26,12 @@ private:
 class GraphicMatroid {
 public:
 	GraphicMatroid(int n) : par(n, -1) {}
-	bool isIndependent(const std::vector<Edge> &a) {
-		return getRank(a) == (int) a.size();
+	bool check(const Edge &e) { return getPar(e.u) != getPar(e.v); }
+	void add(const Edge &e) {
+		assert(makeUnion(e.u, e.v));
 	}
-	int getRank(const std::vector<Edge> &a) {
-		int ans = 0;
-		for(auto e : a) {
-			ans += makeUnion(e.u, e.v) ? 1 : 0;
-		}
-		for(auto e : a) {
-			par[e.u] = par[e.v] = -1;
-		}
-		return ans;
+	void clear() {
+		par.assign((int) par.size(), -1);
 	}
 private:
 	std::vector<int> par;
@@ -60,54 +47,112 @@ private:
 	}
 };
 
-// to get answer just call MatroidIntersection<M1, M2, T>(m1, m2, obj).getSet()
-
-// slow but smaller O(N^3) * oracle with good constant
-// TODO: make it even faster
+// heavy matroid should be M1
 
 template<class M1, class M2, class T>
 class MatroidIntersection {
 public:
-	MatroidIntersection(M1 m1, M2 m2, const std::vector<T> &obj) :
-			n((int) obj.size()), objects(obj), present(obj.size(), false) {
+	MatroidIntersection(M1 m1, M2 m2, const std::vector<T> &obj) {
+		m1.clear();
+		m2.clear();
+		{
+			// removing useless elements
+			for(auto ob : obj) {
+				if(m1.check(ob) && m2.check(ob)) {
+					ground.push_back(ob);
+				}
+			}
+			n = (int) ground.size();
+			present.assign(n, false);
+		}
 		// greedy step
 		for(int i = 0; i < n; i++) {
-			if(test(m1, i) && test(m2, i)) {
+			if(m1.check(ground[i]) && m2.check(ground[i])) {
 				present[i] = true;
+				m1.add(ground[i]);
+				m2.add(ground[i]);
 			}
 		}
 		// augment step
 		while(augment(m1, m2));
 	}
- 
-	std::vector<T> getSet(int o = -1) {
+
+	std::vector<T> getSet() {
 		std::vector<T> ans;
 		for(int i = 0; i < n; i++) {
-			if(present[i] && i != o) {
-				ans.push_back(objects[i]);
+			if(present[i]) {
+				ans.push_back(ground[i]);
 			}
 		}
 		return ans;
 	}
 private:
 	int n;
-	std::vector<T> objects;
+	std::vector<T> ground;
+	std::vector<int> curSet, dist;
 	std::vector<bool> present;
- 
+
 	template<class M>
-	bool test(M &m, int add, int rem = -1) {
-		if(present[add] || (rem != -1 && !present[rem])) return false;
-		auto st = getSet(rem);
-		st.push_back(objects[add]);
-		return m.isIndependent(st);
+	void loadGround(M &m) {
+		m.clear(), curSet.clear();
+		for(int i = 0; i < n; i++) {
+			if(present[i]) {
+				m.add(ground[i]);
+				curSet.push_back(i);
+			}
+		}
+	}
+
+	template<class M>
+	int forwardEdge(int id, bool step, M &m) {
+		assert(!present[id]);
+		m.clear();
+		m.add(ground[id]);
+		for(auto i : curSet) {
+			if(dist[i] != (step ? dist[id]-1 : -1)) {
+				if(m.check(ground[i])) {
+					m.add(ground[i]);
+				}
+			}
+		}
+		for(auto i : curSet) {
+			if(dist[i] == (step ? dist[id]-1 : -1)) {
+				if(m.check(ground[i])) {
+					m.add(ground[i]);
+				} else {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	template<class M>
+	int backwardEdge(int id, bool step, M &m) {
+		assert(present[id]);
+		m.clear();
+		for(auto i : curSet) {
+			if(i != id) {
+				m.add(ground[i]);
+			}
+		}
+		for(int i = 0; i < n; i++) {
+			if(!present[i] && dist[i] == (step ? dist[id]-1 : -1)) {
+				if(m.check(ground[i])) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
  
 	bool augment(M1 &m1, M2 &m2) {
 		std::queue<int> q;
-		std::vector<int> dist(n, -1);
+		dist.assign(n, -1);
 		std::vector<int> frm(n, -1);
+		loadGround(m1);
 		for(int i = 0; i < n; i++) {
-			if(test(m1, i)) {
+			if(!present[i] && m1.check(ground[i])) {
 				q.push(i);
 				dist[i] = 0;
 			}
@@ -115,216 +160,255 @@ private:
 		if(q.empty()) {
 			return false;
 		}
-		while(!q.empty()) {
-			int on = q.front();
-			q.pop();
-			if(dist[on] > limit) {
-				dist[on] = -1;
-				continue;
-			}
-			for(int i = 0; i < n; i++) {
-				if(dist[i] == -1 && (dist[on] % 2 == 0 ? test(m2, on, i) : test(m1, i, on))) {
-					q.push(i);
-					dist[i] = dist[on] + 1;
-					frm[i] = on;
-					if(test(m2, i)) {
-						for(int pos = i; pos != -1; pos = frm[pos]) {
-							present[pos] = !present[pos];
-						}
-						assert(m1.isIndependent(getSet()) && m2.isIndependent(getSet()));
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-};
-
-// fast O(N*R^1.5*logN matroid intersection) * oracle
-// implementation of https://arxiv.org/pdf/1911.10765.pdf
-
-template<class M1, class M2, class T>
-class MatroidIntersection {
-public:
-	MatroidIntersection(M1 m1, M2 m2, const std::vector<T> &obj) :
-			n((int) obj.size()), objects(obj), present(obj.size(), false) {
-		// greedy step
-		for(int i = 0; i < n; i++) {
-			if(test(m1, i) && test(m2, i)) {
-				present[i] = true;
-				curAns++;
-			}
-		}
-		// augment step
-		while(augment(m1, m2));
-	}
-
-	std::vector<T> getSet(int o = -1) {
-		std::vector<T> ans;
-		for(int i = 0; i < n; i++) {
-			if(present[i] && i != o) {
-				ans.push_back(objects[i]);
-			}
-		}
-		return ans;
-	}
-private:
-	int curAns = 0;
-	int n;
-	std::vector<T> objects;
-	std::vector<bool> present;
-
-	template<class M>
-	bool test(M &m, int add, int rem = -1) {
-		if(present[add] || (rem != -1 && !present[rem])) return false;
-		auto st = getSet(rem);
-		st.push_back(objects[add]);
-		return m.isIndependent(st);
-	}
-
-	bool augment(M1 &m1, M2 &m2) {
-		std::queue<int> q;
-		std::vector<int> dist(n, -1);
-		std::vector<int> frm(n, -1);
-		std::vector<std::vector<int>> layers;
-		for(int i = 0; i < n; i++) {
-			if(test(m1, i)) {
-				q.push(i);
-				dist[i] = 0;
-			}
-		}
-		if(q.empty()) {
-			return false;
-		}
-		int limit = 1e9;
-		// faster algorithm helper functions:
-		auto outArc = [&](int u, bool phase) {
-			// TODO: optimize this to return every good candidate
-			std::vector<T> st;
-			std::vector<int> others;
-			if(present[u]) {
-				// find free
-				for(int i = 0; i < n; i++) {
-					if(present[i] && i != u) {
-						st.push_back(objects[i]);
-					} else if(!present[i] && dist[i] == (phase ? dist[u] + 1 : -1)) {
-						others.push_back(i);
-					}
-				}
-				auto _test = [&](int l, int r) {
-					auto cur = st;
-					for(int i = l; i < r; i++) {
-						cur.push_back(objects[others[i]]);
-					}
-					return m1.getRank(cur) >= curAns;
-				};
-				int l = 0, r = (int) others.size();
-				if(l == r || !_test(l, r)) return -1;
-				while(l + 1 != r) {
-					int mid = (l + r) / 2;
-					if(_test(l, mid)) {
-						r = mid;
-					} else {
-						l = mid;
-					}
-				}
-				return others[l];
-			} else {
-				// find exchange
-				for(int i = 0; i < n; i++) {
-					if(present[i] && dist[i] != (phase ? dist[u] + 1 : -1)) {
-						st.push_back(objects[i]);
-					} else if(present[i]) {
-						others.push_back(i);
-					}
-				}
-				auto _test = [&](int l, int r) {
-					auto cur = st;
-					for(int i = 0; i < l; i++) {
-						cur.push_back(objects[others[i]]);
-					}
-					for(int i = r; i < (int) others.size(); i++) {
-						cur.push_back(objects[others[i]]);
-					}
-					cur.push_back(objects[u]);
-					return m2.isIndependent(cur);
-				};
-				int l = 0, r = (int) others.size();
-				if(l == r || !_test(l, r)) return -1;
-				while(l + 1 != r) {
-					int mid = (l + r) / 2;
-					if(_test(l, mid)) {
-						r = mid;
-					} else {
-						l = mid;
-					}
-				}
-				return others[l];
-			}
+		auto getEdge = [&](int id, bool step) {
+			if(!step) return dist[id] % 2 == 0 ? forwardEdge(id, step, m2) : backwardEdge(id, step, m1);
+			else return dist[id] % 2 == 0 ? forwardEdge(id, step, m1) : backwardEdge(id, step, m2);
 		};
+		M2 checker2 = m2;
+		loadGround(checker2);
+		bool got = false;
+		int limit = n + 1;
 		while(!q.empty()) {
 			int on = q.front();
 			q.pop();
-			if((int) layers.size() <= dist[on]) layers.emplace_back(0);
-			layers[dist[on]].push_back(on);
 			if(dist[on] == limit) continue;
-			for(int i = outArc(on, false); i != -1; i = outArc(on, false)) {
-				assert(dist[i] == -1 && (dist[on] % 2 == 0 ? test(m2, on, i) : test(m1, i, on)));
+			for(int i = getEdge(on, false); i != -1; i = getEdge(on, false)) {
 				q.push(i);
 				dist[i] = dist[on] + 1;
 				frm[i] = on;
-				if(limit > n && test(m2, i)) {
+				if(!present[i] && checker2.check(ground[i])) {
+					got = true;
 					limit = dist[i];
-					// remove continue and code below to be maybe faster
-					// but worse complexity
-					continue;
-					for(on = i; on != -1; on = frm[on]) {
-						present[on] = !present[on];
+					/*for(int pos = i; pos != -1; pos = frm[pos]) {
+						present[pos] = !present[pos];
 					}
-					curAns++;
-					return true;
+					return true;*/
 				}
 			}
 		}
-		if(limit > n) return false;
-		auto rem = [&](int on) {
-			assert(dist[on] != -1);
-			auto it = std::find(layers[dist[on]].begin(), layers[dist[on]].end(), on);
-			assert(it != layers[dist[on]].end());
-			layers[dist[on]].erase(it);
-			dist[on] = -1;
-		};
+		if(!got) { return false; }
+		M1 checker1 = m1;
+		loadGround(checker1);
 		std::function<bool(int)> dfs = [&](int on) {
-			if(dist[on] == 0 && !test(m1, on)) {
-				rem(on);
+			if(dist[on] == limit && !checker2.check(ground[on])) {
+				dist[on] = -1;
 				return false;
 			}
-			if(dist[on] == limit) {
-				rem(on);
-				if(test(m2, on)) {
+			if(dist[on] == 0) {
+				dist[on] = -1;
+				if(checker1.check(ground[on])) {
 					present[on] = !present[on];
 					return true;
 				} else {
 					return false;
 				}
 			}
-			for(int to = outArc(on, true); to != -1; to = outArc(on, true)) {
+			for(int to = getEdge(on, true); to != -1; to = getEdge(on, true)) {
+				assert(dist[to] == dist[on]-1);
 				if(dfs(to)) {
-					rem(on);
+					dist[on] = -1;
 					present[on] = !present[on];
 					return true;
 				}
 			}
-			rem(on);
+			dist[on] = -1;
 			return false;
 		};
-		bool got = false;
-		while(!layers[0].empty()) {
-			if(dfs(layers[0].back())) {
+		got = false;
+		for(int i = 0; i < n; i++) {
+			if(dist[i] == limit && dfs(i)) {
+				loadGround(checker1);
+				loadGround(checker2);
 				got = true;
-				assert(m1.isIndependent(getSet()) && m2.isIndependent(getSet()));
-				curAns++;
+			}
+		}
+		assert(got);
+		return true;
+	}
+};
+
+template<class M, class T>
+class MatroidUnion {
+public:
+	MatroidUnion(M m, std::vector<T> objs) : base(m) {
+		ground = objs;
+		base.clear();
+		n = (int) ground.size();
+		mats = 0;
+		curSet.emplace_back(0);
+		col.assign(n, -1);
+	}
+
+	std::vector<int> getCol() { return col; }
+	MatroidUnion<M, T>& addMatroids(int x) {
+		while(x--) {
+			mats++;
+			mat.push_back(base);
+			mat.back().clear();
+			curSet.emplace_back(0);
+		}
+		return *this;
+	}
+	MatroidUnion<M, T>& solve() {
+		// greedy step
+		fix();
+		for(int i = 0; i < mats; i++) {
+			for(int j = 0; j < n; j++) {
+				if(col[j] == -1 && mat[i].check(ground[j])) {
+					col[j] = i;
+					curSet[i].push_back(j);
+					mat[i].add(ground[j]);
+				}
+			}
+		}
+		M m = base;
+		while(augment(m));
+		return *this;
+	}
+private:
+	int n, mats;
+	std::vector<int> col, dist, pt;
+	std::vector<T> ground;
+	std::vector<M> mat;
+	std::vector<std::vector<int>> curSet;
+	M base;
+
+	void fix() {
+		for(int i = 0; i < mats; i++) {
+			mat[i].clear();
+			curSet[i].clear();
+		}
+		for(int i = 0; i < n; i++) {
+			if(col[i] != -1) {
+				mat[col[i]].add(ground[i]);
+				curSet[col[i]].push_back(i);
+			} else {
+				curSet[mats].push_back(i);
+			}
+		}
+	}
+
+	bool augment(M &m) {
+		std::queue<int> q;
+		dist.assign(n, -1);
+		pt.assign(n, 0);
+		std::vector<int> frm(n, -1);
+		m.clear();
+		for(int i = 0; i < n; i++) {
+			if(col[i] == -1 && m.check(ground[i])) {
+				q.push(i);
+				dist[i] = 0;
+			}
+		}
+		if(q.empty()) {
+			return false;
+		}
+		auto getEdge = [&](int id, bool step) {
+			if(!step) {
+				for(; pt[id] < mats; pt[id]++) {
+					int curMat = pt[id];
+					if(curMat == col[id]) continue;
+					m.clear();
+					m.add(ground[id]);
+					for(auto i : curSet[curMat]) {
+						if(dist[i] != -1) {
+							if(m.check(ground[i])) {
+								m.add(ground[i]);
+							}
+						}
+					}
+					for(auto i : curSet[curMat]) {
+						if(dist[i] == -1) {
+							if(m.check(ground[i])) {
+								m.add(ground[i]);
+							} else {
+								return i;
+							}
+						}
+					}
+				}
+			} else {
+				m.clear();
+				for(auto i : curSet[col[id]]) {
+					if(i != id) {
+						m.add(ground[i]);
+					}
+				}
+				for(; pt[id] <= mats; pt[id]++) {
+					int curMat = pt[id];
+					if(curMat == col[id]) continue;
+					for(auto i : curSet[curMat]) {
+						if(dist[i] == dist[id]-1 && m.check(ground[i])) {
+							return i;
+						}
+					}
+				}
+			}
+			return -1;
+		};
+		bool got = false;
+		int limit = n + 1;
+		while(!q.empty()) {
+			int on = q.front();
+			q.pop();
+			if(dist[on] == limit) continue;
+			for(int i = getEdge(on, false); i != -1; i = getEdge(on, false)) {
+				q.push(i);
+				dist[i] = dist[on] + 1;
+				frm[i] = on;
+				int good = -1;
+				for(int j = 0; j < mats; j++) {
+					if(j != col[i] && mat[j].check(ground[i])) {
+						good = j;
+					}
+				}
+				if(good != -1) {
+					got = true;
+					limit = dist[i];
+					/*for(int pos = i; pos != -1; pos = frm[pos]) {
+						std::swap(good, col[pos]);
+					}
+					fix();
+					assert(good == -1);
+					return true;*/
+				}
+			}
+		}
+		if(!got) { return false; }
+		pt.assign(n, 0);
+		got = false;
+		std::function<bool(int, int)> dfs = [&](int on, int c) {
+			if(c == -1) {
+				for(int i = 0; i < mats; i++) {
+					if(i != col[on] && mat[i].check(ground[on])) {
+						c = i;
+					}
+				}
+			}
+			if(c == -1) {
+				dist[on] = -1;
+				return false;
+			}
+			if(dist[on] == 0) {
+				dist[on] = -1;
+				col[on] = c;
+				return true;
+			}
+			for(int to = getEdge(on, true); to != -1; to = getEdge(on, true)) {
+				assert(dist[to] == dist[on]-1);
+				if(dfs(to, col[on])) {
+					dist[on] = -1;
+					col[on] = c;
+					return true;
+				}
+			}
+			dist[on] = -1;
+			return false;
+		};
+		for(int i = 0; i < n; i++) {
+			if(dist[i] == limit && dfs(i, -1)) {
+				got = true;
+				fix();
 			}
 		}
 		assert(got);

@@ -15,7 +15,7 @@ public:
 
 	bool add(T x) {
 		for(int i = N-1; i >= 0; i--) {
-			if((x & (1 << i)) == 0) { continue; }
+			if((x & (((T)1) << i)) == 0) { continue; }
 			if(a[i]) {
 				x ^= a[i];
 			} else {

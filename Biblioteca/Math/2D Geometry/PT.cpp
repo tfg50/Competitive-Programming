@@ -1,7 +1,7 @@
 struct PT {
 	typedef long long T;
 	T x, y;
-	PT(T x = 0, T y = 0) : x(x), y(y){}
+	PT(T _x = 0, T _y = 0) : x(_x), y(_y){}
 	PT operator +(const PT &p) const { return PT(x+p.x,y+p.y); }
 	PT operator -(const PT &p) const { return PT(x-p.x,y-p.y); }
 	PT operator *(T c)         const { return PT(x*c,y*c);     }
@@ -12,4 +12,11 @@ struct PT {
 	//double operator ^(const PT &p) const { return atan2(*this%p, *this*p);}
 	bool operator < (const PT &p) const { return x != p.x ? x < p.x : y < p.y; }
 	bool operator == (const PT &p)const { return x == p.x && y == p.y; }
+
+	friend std::ostream& operator << (std::ostream &os, PT &p) {
+		return os << p.x << ' ' << p.y;
+	}
+	friend std::istream& operator >> (std::istream &is, PT &p) {
+		return is >> p.x >> p.y;
+	}
 };
