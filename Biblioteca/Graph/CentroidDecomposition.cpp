@@ -48,11 +48,12 @@ public:
 		pt[u]++, pt[v]++;
 	}
 
-	void init() {
-		init(0, 0);
+	int init() {
+		int ans = init(0, 0);
 		for(int i = 0; i < n; i++) {
 			std::sort(edges[i].begin(), edges[i].end(), [&](Edge e1, Edge e2) { return col[e1.to] > col[e2.to]; });
 		}
+		return ans;
 	}
 
 	template<class Solver, class Info>
