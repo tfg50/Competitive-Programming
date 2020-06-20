@@ -1,4 +1,5 @@
-std::vector<int> getBorder(std::string str) {
+template<class T>
+std::vector<int> getBorder(T str) {
 	int n = str.size();
 	std::vector<int> border(n, -1);
 	for(int i = 1, j = -1; i < n; i++) {
@@ -13,20 +14,19 @@ std::vector<int> getBorder(std::string str) {
 	return border;
 }
 
-int matchPattern(const std::string &txt, const std::string &pat, std::vector<int> &border) {
-	int freq = 0;
-	for(int i = 0, j = -1; i < txt.size(); i++) {
+template<class T, class F>
+void matchPattern(const T &txt, const T &pat, const std::vector<int> &border, F f) {
+	for(int i = 0, j = -1; i < (int) txt.size(); i++) {
 		while(j >= 0 && txt[i] != pat[j + 1]) {
 			j = border[j];
 		}
 		if(pat[j + 1] == txt[i]) {
 			j++;
 		}
-		if(j + 1 == pat.size()) {
+		if(j + 1 == (int) pat.size()) {
 			//found occurence
-			freq++;
+			f(i - j);
 			j = border[j];
 		}
 	}
-	return freq;
 }

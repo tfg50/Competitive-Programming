@@ -1,4 +1,4 @@
-template<const size_t n, const size_t m, class T = modBase<>>
+template<const int n, const int m, class T = modBase<>>
 struct Matrix {
 	T v[n][m];
 	
@@ -13,8 +13,8 @@ struct Matrix {
 		}
 	}
 	
-	template<size_t mm>
-	Matrix<n, mm, T> operator *(Matrix<m, mm, T> &o) {
+	template<int mm>
+	Matrix<n, mm, T> operator *(const Matrix<m, mm, T> &o) {
 		Matrix<n, mm, T> ans;
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < mm; j++) {

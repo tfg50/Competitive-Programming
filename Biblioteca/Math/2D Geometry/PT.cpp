@@ -13,7 +13,7 @@ struct PT {
 	bool operator < (const PT &p) const { return x != p.x ? x < p.x : y < p.y; }
 	bool operator == (const PT &p)const { return x == p.x && y == p.y; }
 
-	friend std::ostream& operator << (std::ostream &os, PT &p) {
+	friend std::ostream& operator << (std::ostream &os, const PT &p) {
 		return os << p.x << ' ' << p.y;
 	}
 	friend std::istream& operator >> (std::istream &is, PT &p) {

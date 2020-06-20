@@ -56,6 +56,12 @@ public:
 		return ans;
 	}
 
+	// to get only one centroid
+	int getCentroid() {
+		preDFS(0, -1);
+		return getCen(0);
+	}
+
 	template<class Solver, class Info>
 	long long solveEdges(Solver sol, Info base) {
 		long long ans = 0;
