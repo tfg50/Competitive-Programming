@@ -16,7 +16,7 @@ std::vector<PT> ConvexHull (std::vector<PT> pts, bool needs = true) {
 	}
 	pts.resize(std::unique(pts.begin(), pts.end()) - pts.begin());
 	if(pts.size() <= 1) return pts;
-	std::vector<PT> ans(pts.size() + 2);
+	std::vector<PT> ans(pts.size() * 2 + 1);
 	int s = 0;
 	for(int i = 0; i < (int) pts.size(); i++) {
 		while(s > 1 && (pts[i] - ans[s - 2]) % (ans[s - 1] - ans[s - 2]) >= 0) {
