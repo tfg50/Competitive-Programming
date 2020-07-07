@@ -1,34 +1,8 @@
-// sample solution from Digit Tree
-struct Hash {
-	Hash() { pot = 1, ans[0] = ans[1] = 0; }
-	Hash(int v) {
-		pot = 10 % MOD;
-		ans[0] = ans[1] = v % MOD;
-	}
-	Hash(Hash h1, Hash h2) {
-		pot = (int) ((long long) h1.pot * h2.pot % MOD);
-		ans[0] = (int) (((long long) h1.ans[0] * h2.pot + h2.ans[0]) % MOD);
-		ans[1] = (int) ((h1.ans[1] + (long long) h2.ans[1] * h1.pot) % MOD);
-	}
-	int pot, ans[2];
+struct Info {
+	// needs base constructor and (Info, EdgeCostType) constructor
 };
-
 struct Solver {
-	long long operator()(const std::vector<Hash> &a) {
-		cur.clear();
-		for(auto h : a) {
-			cur.push_back(h.ans[1]);
-		}
-		std::sort(cur.begin(), cur.end());
-		long long ans = 0;
-		for(auto h : a) {
-			int want = (int) (-h.ans[0] * modinverse(h.pot, MOD) % MOD + MOD) % MOD;
-			ans += std::upper_bound(cur.begin(), cur.end(), want) - std::lower_bound(cur.begin(), cur.end(), want);
-		}
-		return ans;
-	}
-
-	std::vector<int> cur;
+	void operator()(const std::vector<std::vector<std::pair<int, Info>>> &a) {}
 };
 
 template<class Cost>
@@ -62,27 +36,21 @@ public:
 		return getCen(0);
 	}
 
-	template<class Solver, class Info>
-	long long solveEdges(Solver sol, Info base) {
-		long long ans = 0;
-		std::vector<Info> a, b;
-		for(int i = 0; i < n; i++) {
-			b.clear();
-			b.push_back(base);
-			for(int j = 0; j < pt[i]; j++) {
-				a.clear();
-				dfs(a, edges[i][j].to, i, col[i], Info(base, edges[i][j].c));
-				ans -= sol(a);
-				for(auto v : a) b.push_back(v);
-			}
-			ans += sol(b);
+	template<class Info>
+	std::vector<std::vector<std::pair<int, Info>>> getInfo(int i, Info base) {
+		std::vector<std::pair<int, Info>> a;
+		std::vector<std::vector<std::pair<int, Info>>> ans(1, std::vector<std::pair<int, Info>>(1, std::pair<int, Info>(i, base)));
+		for(int j = 0; j < pt[i]; j++) {
+			a.clear();
+			dfs(a, edges[i][j].to, i, col[i], Info(base, edges[i][j].c));
+			ans.push_back(a);
 		}
 		return ans;
 	}
 
 	template<class Info>
-	void dfs(std::vector<Info> &vec, int on, int par, int lim, Info h) {
-		vec.push_back(h);
+	void dfs(std::vector<std::pair<int, Info>> &vec, int on, int par, int lim, Info h) {
+		vec.emplace_back(on, h);
 		for(auto e : edges[on]) {
 			if(e.to == par) continue;
 			if(col[e.to] <= lim) break;
