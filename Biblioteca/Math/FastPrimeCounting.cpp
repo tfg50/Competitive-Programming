@@ -35,7 +35,7 @@ long long dp(long long n, int i) {
 	if(n == 0) return 0;
 	if(i == 0) return n;
 	if((long long) primes[i-1] * primes[i-1] > n && n < ms) {
-		return id[n] - (i-1);
+		return max(1, id[n] - (i-1));
 	} else if(n < lim_n && i < lim_p) {
 		return memo[n][i];
 	} else {
