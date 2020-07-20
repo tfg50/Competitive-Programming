@@ -3,7 +3,7 @@
 template <class T>
 struct ZFunc {
 	std::vector<int> z;
-	ZFunc(const std::vector<T> &v) : z(v.size()) {
+	ZFunc(const T &v) : z(v.size()) {
 		int n = (int) v.size(), a = 0, b = 0;
 		if (!z.empty()) z[0] = n;
 		for (int i = 1; i < n; i++) {
