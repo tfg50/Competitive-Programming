@@ -1,7 +1,5 @@
 // Point update, range Query segment tree
 
-#include <vector>
-
 struct Node {
 	Node() {
 		// empty constructor

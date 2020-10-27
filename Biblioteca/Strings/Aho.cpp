@@ -23,6 +23,18 @@ struct Aho {
 		nodes.push_back(Node());
 	}
 
+	template<class F>
+	void goUp(int on, F f) {
+		for(on = nodes[on].present ? on : nodes[on].pfail; on > 0; on = nodes[on].pfail) {
+			f(nodes[on]);
+		}
+	}
+
+	template<class CH>
+	int nextState(int on, CH ch) const {
+		return nodes[on].to[ch - off];
+	}
+
 	int addString(const T &str) {
 		int on = 0;
 		for(auto ch : str) {

@@ -12,6 +12,8 @@ struct Treap {
 	Key key;
 	int prio;
 	int size;
+
+	bool flip = false;
 };
 
 typedef Treap * PTreap;
@@ -32,6 +34,15 @@ void fix(PTreap t) {
 void pushLazy(PTreap t) {
 	if(t == NULL) {
 		return;
+	}
+	if(t->flip) {
+		std::swap(t->l, t->r);
+		if(t->l) {
+			t->l->flip = !t-l->flip;
+		}
+		if(t->r) {
+			t->r->flip = !t->r->flip;
+		}
 	}
 }
 

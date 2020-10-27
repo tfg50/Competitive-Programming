@@ -1,7 +1,7 @@
-template <class T>
 class SuffixArray {
 public:
-	std::vector<int> buildSuffix(const std::vector<T> &array) {
+	template<class T>
+	std::vector<int> buildSuffix(const T &array) {
 		int n = array.size();
 		std::vector<int> sa(n);
 		for(int i = 0; i < n; i++) {
@@ -29,7 +29,8 @@ public:
 		return sa;
 	}
 
-	std::vector<int> buildLCP(const std::vector<int> &sa, const std::vector<T> &array) {
+	template<class T>
+	std::vector<int> buildLCP(const std::vector<int> &sa, const T &array) {
 		int n = sa.size();
 		std::vector<int> inv(n);
 		for(int i = 0; i < n; i++) {
@@ -59,6 +60,6 @@ private:
 		// O(n) step, O(nlogn) total -- TO DO --
 	}
 	std::pair<int, int> getPair(const std::vector<int> &inv, int pos, int offset) {
-		return std::pair<int, int>(inv[pos], pos + offset < inv.size() ? inv[pos + offset] : -1);
+		return std::pair<int, int>(inv[pos], pos + offset < (int) inv.size() ? inv[pos + offset] : -1);
 	}
 };

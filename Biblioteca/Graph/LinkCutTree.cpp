@@ -61,6 +61,6 @@ struct LinkCutTree {
 
 	Splay::Node* getPath(int u, int v) {
 		if(!isConnected(v, u)) return NULL;
-		else return getNode(v);
+		else return getNode(u);
 	}
 };

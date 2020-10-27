@@ -1,7 +1,5 @@
 // Range update, range query segment tree
 
-#include <vector>
-
 struct LazyContext {
 	LazyContext() {
 		

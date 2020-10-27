@@ -14,9 +14,7 @@ public:
 	T maxFlow(int src, int sink) {
 		T ans = 0;
 		while(bfs(src, sink)) {
-			//for(int i = 0; i < n; i++) {
-			//	std::random_shuffle(edges[i].begin(), edges[i].end());
-			//}
+			// maybe random shuffle edges against bad cases?
 			T flow;
 			pt = std::vector<int>(n, 0);
 			while((flow = dfs(src, sink))) {
@@ -26,12 +24,15 @@ public:
 		return ans;
 	}
 
-	void addEdge(int from, int to, T cap = 1) {
+	void addEdge(int from, int to, T cap = 1, T other = 0) {
 		edges[from].push_back(list.size());
 		list.push_back(Edge(to, cap));
 		edges[to].push_back(list.size());
-		list.push_back(Edge(from, 0));
+		list.push_back(Edge(from, other));
 	}
+
+	bool inCut(int u) const { return h[u] < n; }
+	int size() const { return n; }
 private:
 	int n;
 	std::vector<std::vector<int> > edges;

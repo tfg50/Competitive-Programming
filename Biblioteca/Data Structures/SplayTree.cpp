@@ -26,6 +26,7 @@ struct SplayTree {
 		Node() {}
 		Node(i_t v) : base(v), info(v) {}
 		~Node() {
+			// remove the next 2 lines if using link cut tree
 			if(left) delete left;
 			if(right) delete right;
 		}
@@ -88,6 +89,7 @@ struct SplayTree {
 			//fix();
 		}
 	};
+	// doesn't need anything from below if using for link cut tree
 	Node* root;
 	SplayTree(Node* r = NULL) : root(r) {}
 	Node* lower_bound(i_t val) { return search(val, [](const i_t &a, const i_t &b){ return !(b < a); }); }
