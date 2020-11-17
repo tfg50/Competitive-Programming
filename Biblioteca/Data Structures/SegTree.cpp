@@ -89,16 +89,16 @@ public:
 		l += n, r += n;
 		push(l);
 		push(r-1);
-		std::vector<int> pref, suf;
-		pref.reserve(h+1), suf.reserve(h+1);
+		int pref[h+1], suf[h+1], s[2] = {0, 0}; // depending on compiler might want to change pref and suf to vectors, resize(h+1) and push_back below
 		for(; l < r; l /= 2, r /= 2) {
-			if(l & 1) pref.push_back(l++);
-			if(r & 1) suf.push_back(--r);
+			if(l & 1) pref[s[0]++] = l++;
+			if(r & 1) suf[s[1]++] = --r;
 		}
-		std::reverse(suf.begin(), suf.end());
+		std::reverse(suf, suf + s[1]);
 		i_t cur;
 		for(int rep = 0; rep < 2; rep++) {
-			for(auto i : rep == 0 ? pref : suf) {
+			for(int id = 0; id < s[rep]; id++) {
+				int i = rep == 0 ? pref[id] : suf[id];
 				if(f(i_t(cur, tree[i]))) {
 					while(i < n) {
 						pushNode(i);
