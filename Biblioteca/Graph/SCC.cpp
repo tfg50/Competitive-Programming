@@ -43,7 +43,7 @@ struct SCC {
 
 	void tarjan() {
 		c = x = 0;
-		for(int i = 0; i < edges.size(); i++) {
+		for(int i = 0; i < (int) edges.size(); i++) {
 			// for 2sat, 2 * i is true if comp[2 * i] < comp[2 * i + 1]
 			dfs(i);
 		}

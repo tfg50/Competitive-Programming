@@ -1,8 +1,8 @@
 template <class T>
 class FenwickTree {
 public:
-	void init(int n) {
-		this->n = n;
+	void init(int _n) {
+		this->n = _n;
 		bit.assign(n + 1, 0);
 	}
 
