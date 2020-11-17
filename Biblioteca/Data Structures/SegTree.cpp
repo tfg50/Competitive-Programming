@@ -81,15 +81,16 @@ public:
 		build(l0);
 		build(r0 - 1);
 	}
-
+	
 	template<class F>
 	int search(int l, int r, F f) {
-		assert(l < r);
+		assert(l <= r);
 		int lst = r;
 		l += n, r += n;
 		push(l);
 		push(r-1);
 		std::vector<int> pref, suf;
+		pref.reserve(h+1), suf.reserve(h+1);
 		for(; l < r; l /= 2, r /= 2) {
 			if(l & 1) pref.push_back(l++);
 			if(r & 1) suf.push_back(--r);
@@ -100,15 +101,11 @@ public:
 			for(auto i : rep == 0 ? pref : suf) {
 				if(f(i_t(cur, tree[i]))) {
 					while(i < n) {
-						if(dirty[i]) {
-							apply(i + i, lazy[i]);
-							apply(i + i + 1, lazy[i]);
-							lazy[i].reset();
-							dirty[i] = false;
-						}
+						pushNode(i);
 						i += i;
-						if(!f(i_t(cur, tree[i]))) {
-							cur = i_t(cur, tree[i]);
+						i_t other = i_t(cur, tree[i]);
+						if(!f(other)) {
+							cur = other;
 							i++;
 						}
 					}
@@ -119,7 +116,6 @@ public:
 		}
 		return lst;
 	}
-	
 private:
 	int n, h;
 	std::vector<bool> dirty;
@@ -137,12 +133,16 @@ private:
 	void push(int p) {
 		for(int s = h; s > 0; s--) {
 			int i = p >> s;
-			if(dirty[i]) {
-				apply(i + i, lazy[i]);
-				apply(i + i + 1, lazy[i]);
-				lazy[i].reset();
-				dirty[i] = false;
-			}
+			pushNode(i);
+		}
+	}
+
+	inline void pushNode(int i) {
+		if(dirty[i]) {
+			apply(i + i, lazy[i]);
+			apply(i + i + 1, lazy[i]);
+			lazy[i].reset();
+			dirty[i] = false;
 		}
 	}
 	
