@@ -10,3 +10,18 @@ void initComb() {
 	}
 }
 modBase<> comb(int n, int a) { return a < 0 || a > n ? modBase<>(0) : fat[n] * ifat[a] * ifat[n-a]; }
+
+template<class T>
+std::vector<T> partitionNumber(int n) {
+	std::vector<T> ans(n, 0);
+	ans[0] = 1;
+	for(int i = 1; i < n; i++) {
+		for(int j = 1; j * (3 * j + 1) / 2 <= i; j++) {
+			ans[i] = ((j & 1) ? ans[i] + ans[i - j * (3 * j + 1) / 2] : ans[i] - ans[i - j * (3 * j + 1) / 2]);
+		}
+		for(int j = 1; j * (3 * j - 1) / 2 <= i; j++) {
+			ans[i] = ((j & 1) ? ans[i] + ans[i - j * (3 * j - 1) / 2] : ans[i] - ans[i - j * (3 * j - 1) / 2]);
+		}
+	}
+	return ans;
+}

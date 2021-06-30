@@ -25,7 +25,7 @@ struct Node {
 		// init
 	}
 	
-	Node(Node &l, Node &r) {
+	Node(const Node &l, const Node &r) {
 		// merge
 	}
 	
@@ -58,8 +58,7 @@ public:
 	i_t qry(int l, int r) {
 		if(l >= r) return i_t();
 		l += n, r += n;
-		push(l);
-		push(r - 1);
+		push(l), push(r - 1);
 		i_t lp, rp;
 		for(; l < r; l /= 2, r /= 2) {
 			if(l & 1) lp = i_t(lp, tree[l++]);
@@ -71,32 +70,33 @@ public:
 	void upd(int l, int r, lazy_cont lc) {
 		if(l >= r) return;
 		l += n, r += n;
-		push(l);
-		push(r - 1);
+		push(l), push(r - 1);
 		int l0 = l, r0 = r;
 		for(; l < r; l /= 2, r /= 2) {
 			if(l & 1) apply(l++, lc);
 			if(r & 1) apply(--r, lc);
 		}
-		build(l0);
-		build(r0 - 1);
+		build(l0), build(r0 - 1);
 	}
 	
+	// don't copy this for most segment tree problems!
+	// search first x in [l, r] such that [l, x) triggers f([l, x))
 	template<class F>
-	int search(int l, int r, F f) {
-		assert(l <= r);
+	std::pair<int, i_t> search(int l, int r, F f) {
+		// assert(l < r);
+		if(l >= r) return std::pair<int, i_t>(r, i_t()); // careful with this case
 		int lst = r;
 		l += n, r += n;
-		push(l);
-		push(r-1);
-		int pref[h+1], suf[h+1], s[2] = {0, 0}; // depending on compiler might want to change pref and suf to vectors, resize(h+1) and push_back below
+		push(l), push(r-1);
+		static int pref[30], suf[30];
+		int s[2] = {0, 0};
 		for(; l < r; l /= 2, r /= 2) {
 			if(l & 1) pref[s[0]++] = l++;
 			if(r & 1) suf[s[1]++] = --r;
 		}
-		std::reverse(suf, suf + s[1]);
 		i_t cur;
 		for(int rep = 0; rep < 2; rep++) {
+			if(rep == 1) { std::reverse(suf, suf + s[1]); }
 			for(int id = 0; id < s[rep]; id++) {
 				int i = rep == 0 ? pref[id] : suf[id];
 				if(f(i_t(cur, tree[i]))) {
@@ -109,12 +109,12 @@ public:
 							i++;
 						}
 					}
-					return i - n;
+					return std::pair<int, i_t>(i - n, cur);
 				}
 				cur = i_t(cur, tree[i]);
 			}
 		}
-		return lst;
+		return std::pair<int, i_t>(lst, cur);
 	}
 private:
 	int n, h;

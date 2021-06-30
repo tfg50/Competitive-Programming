@@ -24,7 +24,7 @@ public:
 		return ans;
 	}
 
-	void addEdge(int from, int to, T cap = 1, T other = 0) {
+	void addEdge(int from, int to, T cap, T other = 0) {
 		edges[from].push_back(list.size());
 		list.push_back(Edge(to, cap));
 		edges[to].push_back(list.size());
