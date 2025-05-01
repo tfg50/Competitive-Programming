@@ -1,1 +1,8 @@
-*.exe
+.vscode/*
+auto_in
+auto_out
+in
+out
+temp.cpp
+x.cpp
+x.py
