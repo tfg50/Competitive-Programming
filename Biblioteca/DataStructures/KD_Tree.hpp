@@ -72,7 +72,7 @@ private:
             nearestNeighbor<(d+1)%D>(node->left, point, ans);
             if(ans.first > delta * delta) {
                 nearestNeighbor<(d+1)%D>(node->right, point, ans);
-            } 
+            }
         } else {
             nearestNeighbor<(d+1)%D>(node->right, point, ans);
             if(ans.first > delta * delta) {

@@ -6,7 +6,7 @@ template<class Num, const int me = 22>
 struct DFT {
     static constexpr int ms = 1 << me;
     inline static Num root[ms];
- 
+
     static void init() {
         static bool initialized = false;
         if(!initialized) {
@@ -23,7 +23,7 @@ struct DFT {
             }
         }
     }
- 
+
     static std::vector<Num> dft(std::vector<Num> a, bool inv = false) {
         init();
         int n = (int) a.size();
@@ -56,7 +56,7 @@ struct DFT {
         }
         return a;
     }
- 
+
     static std::vector<Num> mult(const std::vector<Num> &a, const std::vector<Num> &b) {
         auto A = dft(a), B = a == b ? A : dft(b);
         for(int i = 0; i < (int) a.size(); i++) {
@@ -64,7 +64,7 @@ struct DFT {
         }
         return dft(A, true);
     }
- 
+
     static std::vector<Num> mult(const std::vector<int> &a, const std::vector<int> &b) {
         std::vector<Num> A(a.size()), B(b.size());
         for(int i = 0; i < (int) a.size(); i++) {

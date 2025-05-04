@@ -107,7 +107,7 @@ std::vector<int> operator *(std::vector<int> a, std::vector<int> b) {
     a = fft(a, false);
     b = fft(b, false);
     for(int i = 0; i < n; i++) {
-        a[i] = (int) ((long long) a[i] * b[i] % MOD); 
+        a[i] = (int) ((long long) a[i] * b[i] % MOD);
     }
     return fft(a, true);
 }
@@ -170,7 +170,7 @@ int bits[ms];
 template<class mint, class T, const T MOD, const T gen, const T order = MOD - 1>
 struct FFT {
     mint root[ms];
- 
+
     FFT() {
         mint mgen(gen);
         assert(mgen.pow(order) == 1 && mgen.pow(order / 2) != 1);
@@ -183,7 +183,7 @@ struct FFT {
             }
         }
     }
- 
+
     void pre(int n) {
         int LOG = 0;
         while(1 << (LOG + 1) < n) {
@@ -193,7 +193,7 @@ struct FFT {
             bits[i] = (bits[i >> 1] >> 1) | ((i & 1) << LOG);
         }
     }
- 
+
     std::vector<mint> fft(std::vector<mint> a, bool inv = false) {
         int n = (int) a.size();
         pre(n);
@@ -221,7 +221,7 @@ struct FFT {
         }
         return a;
     }
- 
+
     std::vector<mint> mult(const std::vector<mint> &a, const std::vector<mint> &b) {
         auto A = fft(a), B = a == b ? A : fft(b);
         for(int i = 0; i < (int) a.size(); i++) {
@@ -229,7 +229,7 @@ struct FFT {
         }
         return fft(A, true);
     }
- 
+
     std::vector<mint> mult(const std::vector<int> &a, const std::vector<int> &b) {
         std::vector<mint> A(a.size()), B(b.size());
         for(int i = 0; i < (int) a.size(); i++) {

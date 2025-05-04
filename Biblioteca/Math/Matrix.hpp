@@ -5,7 +5,7 @@
 template<const int n, const int m, class T = int>
 struct Matrix {
     T v[n][m];
-    
+
     Matrix(int d = 0) {
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < m; j++) {
@@ -16,7 +16,7 @@ struct Matrix {
             }
         }
     }
-    
+
     template<int mm>
     Matrix<n, mm, T> operator *(const Matrix<m, mm, T> &o) {
         Matrix<n, mm, T> ans;

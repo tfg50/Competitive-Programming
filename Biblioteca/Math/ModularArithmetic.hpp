@@ -27,7 +27,7 @@ struct modBase {
     using mint = modBase<LOW, HIGH, mod>;
     constexpr modBase() : val(0) {}
     // be careful of negative numbers!
-    constexpr modBase(const LOW v) : val((v % mod + mod) % mod) {} 
+    constexpr modBase(const LOW v) : val((v % mod + mod) % mod) {}
     LOW val;
 
     #define add(a, b) a + b >= mod ? a + b - mod : a + b

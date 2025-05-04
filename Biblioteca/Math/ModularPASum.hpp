@@ -2,7 +2,7 @@
 #define MODULAR_PA_SUM_H
 #include "Biblioteca/template_basics.hpp"
 
-//calcula (sum(0 <= i <= n) P(i)) % mod, 
+//calcula (sum(0 <= i <= n) P(i)) % mod,
 //onde P(i) é uma PA modular (com outro modulo)
 namespace sum_pa_mod{
     ll calc(ll a, ll b, ll n, ll mod){

@@ -4,7 +4,7 @@
 
 template<class T>
 T gcd(T a, T b) { return b == 0 ? a : gcd(b, a % b); }
- 
+
 template<class T>
 struct Frac {
     T p, q;
@@ -28,7 +28,7 @@ struct Frac {
     Frac<T> operator - (Frac<T> o) const {return Frac(p * o.q - o.p * q, q * o.q); }
     Frac<T> operator * (Frac<T> o) const { return Frac(p * o.p, q * o.q); }
     Frac<T> operator / (Frac<T> o) const { return Frac(p * o.q, q * o.p); }
- 
+
     void fix() {
         if(q < 0) {
             q = -q;
@@ -38,10 +38,10 @@ struct Frac {
         p /= g;
         q /= g;
     }
- 
+
     bool operator < (Frac<T> o) const { return ((*this) - o).p < 0; }
     bool operator > (Frac<T> o) const { return ((*this) - o).p > 0; }
- 
+
     friend std::ostream& operator << (std::ostream &os, const Frac<T> &f) {
         return os << f.p << '/' << f.q;
     }

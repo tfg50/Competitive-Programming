@@ -8,7 +8,7 @@ struct Node{
 
 int CNT = 1;
 Node buffer[ms * 20];
- 
+
 Node* update(Node *root, int l, int r, int idx, int val){
     Node *node = &buffer[CNT++];
     *node = *root;
@@ -20,7 +20,7 @@ Node* update(Node *root, int l, int r, int idx, int val){
     }
     return node;
 }
- 
+
 int query(Node *node, int tl, int tr, int l, int r){
     if(l <= tl && tr <= r) return node->v;
     if(tr <= l || tl >= r) return 0;

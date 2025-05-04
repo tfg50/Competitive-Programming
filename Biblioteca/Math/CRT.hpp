@@ -9,7 +9,7 @@ long long mul(long long a, long long b, long long m) {
     long long r = a * b - q * m;
     return (r + m) % m;
 }
- 
+
 struct Equation {
     Equation(long long a, long long m) { mod = m, ans = (a % m + m) % m, valid = true; }
     Equation() { valid = false; }

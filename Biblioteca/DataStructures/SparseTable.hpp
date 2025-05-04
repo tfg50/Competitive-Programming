@@ -26,7 +26,7 @@ public:
             }
         }
     }
-    
+
     T qry(int l, int r) {
         int e = getPos(r - l);
         return merge(table[e][l], table[e][r - (1 << e)]);

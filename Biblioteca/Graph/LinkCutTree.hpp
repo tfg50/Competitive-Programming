@@ -5,7 +5,7 @@
 struct LinkCutTree {
     LinkCutTree(int N) : nodes(N) {}
     std::vector<Splay::Node> nodes; // can change to map<int, Splay::Node*> if possible
-    
+
     /* USE THIS IF USING MAP
     void createVertex(int u, Info info) {
         assert(!nodes.count(u));

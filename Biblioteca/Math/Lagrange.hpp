@@ -17,7 +17,7 @@ public:
             }
         }
     }
-    
+
     mint getVal(mint x) {
         int n = (int) y.size();
         std::vector<mint> l, r;
@@ -38,7 +38,7 @@ public:
         }
         return ans;
     }
-    
+
 private:
     std::vector<mint> y, den;
 };

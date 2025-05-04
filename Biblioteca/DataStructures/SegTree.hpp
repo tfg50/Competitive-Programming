@@ -17,7 +17,7 @@ public:
             tree[i] = i_t(tree[i + i], tree[i + i + 1]);
         }
     }
-    
+
     i_t qry(int l, int r) {
         i_t lp, rp;
         for(l += n, r += n; l < r; l /= 2, r /= 2) {
@@ -26,7 +26,7 @@ public:
         }
         return i_t(lp, rp);
     }
-    
+
     void upd(int pos, e_t v) {
         pos += n;
         tree[pos] = i_t(v);

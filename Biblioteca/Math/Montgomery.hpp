@@ -5,14 +5,14 @@
 template<class LOW, class HIGH, const int bits, const LOW mod>
 struct Montgomery {
     using mint = Montgomery<LOW, HIGH, bits, mod>;
- 
+
     static constexpr LOW getInv() {
         LOW ans = 1;
         for (int i = 0; i < 7; i++)
             ans *= 2 - mod * ans;
         return ans;
     }
- 
+
     static constexpr LOW getR2()  {
         LOW ans = -mod % mod;
         for (int i = 0; i < bits; i++) {
@@ -21,7 +21,7 @@ struct Montgomery {
         }
         return ans;
     }
- 
+
     static constexpr LOW reduce(HIGH x) {
         LOW q = (LOW) x * inv;
         LOW a = (LOW) (x >> bits) - (LOW) (((HIGH) q * mod) >> bits);
@@ -29,16 +29,16 @@ struct Montgomery {
             a += mod;
         return a;
     }
- 
+
     static constexpr LOW mult(LOW a, LOW b) { return reduce((HIGH) a * b); }
     static constexpr LOW inv = getInv(), r2 = getR2();
- 
+
     constexpr Montgomery() : val(0) {}
     constexpr Montgomery(const LOW x) : val(mult(x % mod, r2)) {}
 
     #define add(a, b) a + b >= mod ? a + b - mod : a + b
     #define sub(a, b) a < b ? a + mod - b : a - b
- 
+
     constexpr mint &operator += (const mint &o) { return val = add(val, o.val), *this; }
     constexpr mint &operator -= (const mint &o) { return val = sub(val, o.val), *this; }
     constexpr mint &operator *= (const mint &o) { return val = reduce((HIGH) val * o.val), *this; }

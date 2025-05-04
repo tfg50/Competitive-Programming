@@ -15,7 +15,7 @@ public:
         lazy.resize(2 * n);
         build(1, 0, n - 1, base);
     }
-    
+
     i_t qry(int l, int r) { return qry(1, 0, n - 1, l, r - 1); }
     void upd(int l, int r, lazy_cont lc) { upd(1, 0, n - 1, l, r - 1, lc); }
     void upd(int pos, e_t v) { upd(1, 0, n - 1, pos, v); }

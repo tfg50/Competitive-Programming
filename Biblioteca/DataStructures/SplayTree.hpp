@@ -60,7 +60,7 @@ struct SplayTree {
             fix();
             return this;
         }
-        
+
         void push() {
             if(flip) {
                 std::swap(left, right);

@@ -26,7 +26,7 @@ std::pair<int, int> ClosestPair(const std::vector<PT> &pts) {
             long long curDist = sqrDist(pts[p[r]] - pts[it->second]);
             if(curDist < dist) {
                 dist = curDist;
-                ans = std::pair<int, int>(p[r], it->second); 
+                ans = std::pair<int, int>(p[r], it->second);
             }
         }
         points.insert(std::pair<int, int>(pts[p[r]].y, p[r]));

@@ -149,7 +149,7 @@ private:
         }
         return -1;
     }
- 
+
     bool augment(M1 &m1, M2 &m2) {
         std::queue<int> q;
         dist.assign(n, -1);

@@ -40,7 +40,7 @@ struct Segment {
         y /= tmp;
         return PT(x, y);
     }
-    
+
     bool polygonIntersection(const std::vector<PT> &poly) {
         long double l = -1e18, r = 1e18;
         for(auto p : poly) {

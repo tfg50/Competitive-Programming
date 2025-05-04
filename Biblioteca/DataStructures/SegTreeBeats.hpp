@@ -20,7 +20,7 @@ public:
             lazy[i] = lazy_cont();
         }
     }
-    
+
     i_t qry(int l, int r) {
         if(l >= r) return i_t();
         l += n, r += n;
@@ -33,7 +33,7 @@ public:
         }
         return i_t(lp, rp);
     }
-    
+
     void upd(int l, int r, lazy_cont lc) {
         if(l >= r) return;
         l += n, r += n;
@@ -95,7 +95,7 @@ private:
             tree[p] = i_t(tree[p + p], tree[p + p + 1]);
         }
     }
-    
+
     void build(int p) {
         for(p /= 2; p > 0; p /= 2) {
             tree[p] = i_t(tree[p + p], tree[p + p + 1]);

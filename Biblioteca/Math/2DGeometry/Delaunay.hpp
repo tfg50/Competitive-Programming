@@ -68,7 +68,7 @@ namespace delaunay{
       if(ans[ta].p[i] != pa && ans[ta].p[i] != pc)
         pb = ans[ta].p[i];
       if(ans[tb].p[i] != pa && ans[tb].p[i] != pc)
-        pd = ans[tb].p[i];  
+        pd = ans[tb].p[i];
     }
     point ca = circuncentro(pnts[pa], pnts[pb], pnts[pc]), cb = circuncentro(pnts[pa], pnts[pd], pnts[pc]);
     ld ra = dist(ca, pnts[pa]), rb = dist(cb, pnts[pa]);
@@ -122,7 +122,7 @@ namespace delaunay{
       //rep(j,0,sz(ans)) if(!apagado[j] && inside(vet[i], ans[j]))
       //  ids.pb(j)/*, cout << "~~ " << j << endl*/;
       //assert(0 < sz(ids) && sz(ids) < 3);
-       
+
       int cur = sz(ans)-1;
       while(1){
         int pcur = cur;
@@ -153,7 +153,7 @@ namespace delaunay{
         }
         assert(cur != pcur);
       }
-       
+
       if(sz(ids)==1){
         int ta = ids[0];
         int tb = sz(ans), tc = sz(ans)+1, td = sz(ans)+2;
@@ -194,7 +194,7 @@ namespace delaunay{
         }
         assert(pa!=-1);
         rep(j,0,3) if(between(pnts[ans[tb].p[j]], pnts[p], pnts[ans[tb].p[r3[j+1]]])){
-          assert((pb == ans[tb].p[j] && pd == ans[tb].p[r3[j+1]]) || 
+          assert((pb == ans[tb].p[j] && pd == ans[tb].p[r3[j+1]]) ||
               (pb == ans[tb].p[r3[j+1]] && pd == ans[tb].p[j]));
           pc = ans[tb].p[r3[j+2]];
         }

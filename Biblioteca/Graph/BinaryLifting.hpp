@@ -9,7 +9,7 @@ namespace BinaryLifting {
     const int me = 18;
     int anc[me][ms];
     int h[ms];
-    
+
     void dfs(const std::vector<std::vector<int>> &edges, int on, int par, int he = 0) {
         h[on] = he;
         anc[0][on] = par;
@@ -19,7 +19,7 @@ namespace BinaryLifting {
             }
         }
     }
-    
+
     void init(const std::vector<std::vector<int>> &edges, int on = 0) {
         dfs(edges, on, on);
         for(int i = 1; i < me; i++) {
@@ -28,7 +28,7 @@ namespace BinaryLifting {
             }
         }
     }
-    
+
     int getLCA(int u, int v) {
         if(h[u] < h[v]) {
             std::swap(u, v);
@@ -51,7 +51,7 @@ namespace BinaryLifting {
         }
         return anc[0][u];
     }
-    
+
     int getDist(int u, int v) {
         int lca = getLCA(u, v);
         return h[u] + h[v] - 2 * h[lca];

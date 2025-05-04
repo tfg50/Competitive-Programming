@@ -22,7 +22,7 @@ public:
             lazy[i] = lazy_cont();
         }
     }
-    
+
     i_t qry(int l, int r) {
         if(l >= r) return i_t();
         l += n, r += n;
@@ -34,7 +34,7 @@ public:
         }
         return lp + rp;
     }
-    
+
     void upd(int l, int r, lazy_cont lc) {
         if(l >= r) return;
         l += n, r += n;
@@ -47,7 +47,7 @@ public:
         }
         build(l0), build(r0 - 1);
     }
-    
+
     // don't copy this for most segment tree problems!
     // search first x in [l, r) such that [l, x) triggers f([l, x))
     template<class F>
@@ -90,7 +90,7 @@ private:
     std::vector<bool> dirty;
     std::vector<i_t> tree;
     std::vector<lazy_cont> lazy;
-    
+
     void apply(int p, lazy_cont &lc, int size, int shift) {
         tree[p].apply(lc, size, shift);
         if(p < n) {
@@ -98,7 +98,7 @@ private:
             lazy[p] += lc;
         }
     }
-    
+
     void push(int p) {
         for(int s = h; s > 0; s--) {
             int i = p >> s;
@@ -114,7 +114,7 @@ private:
             dirty[i] = false;
         }
     }
-    
+
     void build(int p) {
         int size = 2;
         for(p /= 2; p > 0; p /= 2, size *= 2) {
