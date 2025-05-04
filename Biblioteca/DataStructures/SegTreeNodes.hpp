@@ -56,4 +56,13 @@ struct MaxNode {
     T ans;
 };
 
+template <class T = int32_t>
+struct MinNode {
+    MinNode(T v = 1e9) { ans = v; }
+    MinNode(MinNode l, MinNode r) { ans = std::min(l.ans, r.ans); }
+    void apply(T lazy, int size, int _) { ans += lazy; }
+    MinNode operator + (MinNode o) const { return MinNode(*this, o); }
+    T ans;
+};
+
 #endif
